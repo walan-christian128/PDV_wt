@@ -1,52 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 6.19.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="teree" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="821918af-4984-4f98-bdfe-147eb5cf5edb">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
 	<parameter name="ID_VENDA" class="java.lang.Integer"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT distribuidora.tb_vendas.data_venda,
-	distribuidora.tb_vendas.total_venda,
-	distribuidora.tb_vendas.forma_pagamento,
-	distribuidora.tb_itensvendas.qtd,
-	distribuidora.tb_produtos.descricao,
-	distribuidora.tb_produtos.preco_de_venda
-FROM distribuidora.tb_itensvendas
-	INNER JOIN distribuidora.tb_vendas ON 
-	 distribuidora.tb_itensvendas.venda_id = distribuidora.tb_vendas.id 
-	INNER JOIN distribuidora.tb_produtos ON 
-	 distribuidora.tb_itensvendas.produto_id = distribuidora.tb_produtos.id
-	 where distribuidora.tb_vendas.id =   $P{ID_VENDA} ]]>
+		<![CDATA[SELECT MAX(tb_vendas.id) AS codigo,
+       tb_clientes.nome AS Nome, 
+       tb_clientes.celular AS Celular, 
+       tb_clientes.endereco AS Endereco,
+       tb_clientes.numero AS Numero, 
+       tb_clientes.bairro AS Bairro, 
+       tb_clientes.cidade AS Cidade,
+       tb_itensvendas.subtotal AS SubTotal,
+       tb_produtos.descricao AS Descricao,    
+       tb_vendas.total_venda AS Total_Da_Venda                       
+FROM tb_produtos    
+INNER JOIN tb_itensvendas ON tb_produtos.id = tb_itensvendas.produto_id    
+INNER JOIN tb_vendas ON tb_itensvendas.venda_id = tb_vendas.id    
+LEFT JOIN tb_clientes ON tb_vendas.cliente_id = tb_clientes.id    
+WHERE tb_vendas.id in (select max(tb_vendas.id) from tb_vendas)
+GROUP BY tb_clientes.nome, 
+         tb_clientes.celular, 
+         tb_clientes.endereco,
+         tb_clientes.numero, 
+         tb_clientes.bairro, 
+         tb_clientes.cidade,
+         tb_itensvendas.subtotal,
+         tb_produtos.descricao,    
+         tb_vendas.total_venda]]>
 	</queryString>
-	<field name="data_venda" class="java.time.LocalDateTime">
-		<property name="com.jaspersoft.studio.field.name" value="data_venda"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_venda"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tb_vendas"/>
+	<field name="codigo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
 	</field>
-	<field name="total_venda" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="total_venda"/>
-		<property name="com.jaspersoft.studio.field.label" value="total_venda"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tb_vendas"/>
+	<field name="Nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="Nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
 	</field>
-	<field name="forma_pagamento" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="forma_pagamento"/>
-		<property name="com.jaspersoft.studio.field.label" value="forma_pagamento"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tb_vendas"/>
+	<field name="Celular" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="celular"/>
+		<property name="com.jaspersoft.studio.field.label" value="Celular"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
 	</field>
-	<field name="qtd" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="qtd"/>
-		<property name="com.jaspersoft.studio.field.label" value="qtd"/>
+	<field name="Endereco" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="endereco"/>
+		<property name="com.jaspersoft.studio.field.label" value="Endereco"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
+	</field>
+	<field name="Numero" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="numero"/>
+		<property name="com.jaspersoft.studio.field.label" value="Numero"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
+	</field>
+	<field name="Bairro" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bairro"/>
+		<property name="com.jaspersoft.studio.field.label" value="Bairro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
+	</field>
+	<field name="Cidade" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cidade"/>
+		<property name="com.jaspersoft.studio.field.label" value="Cidade"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_clientes"/>
+	</field>
+	<field name="SubTotal" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="subtotal"/>
+		<property name="com.jaspersoft.studio.field.label" value="SubTotal"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tb_itensvendas"/>
 	</field>
-	<field name="descricao" class="java.lang.String">
+	<field name="Descricao" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="descricao"/>
-		<property name="com.jaspersoft.studio.field.label" value="descricao"/>
+		<property name="com.jaspersoft.studio.field.label" value="Descricao"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tb_produtos"/>
 	</field>
-	<field name="preco_de_venda" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="preco_de_venda"/>
-		<property name="com.jaspersoft.studio.field.label" value="preco_de_venda"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tb_produtos"/>
+	<field name="Total_Da_Venda" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_venda"/>
+		<property name="com.jaspersoft.studio.field.label" value="Total_Da_Venda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_vendas"/>
 	</field>
 	<group name="data_venda">
 		<groupExpression><![CDATA[$F{data_venda}]]></groupExpression>

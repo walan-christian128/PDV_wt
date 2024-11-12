@@ -8,12 +8,20 @@
 <%@ page import="Model.Clientes"%>
 <%@ page import="Model.Produtos"%>
 <%@ page import="DAO.ClientesDAO"%>
+<%@ page import="DAO.VendasDAO"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 
 <%
 Date dataAtual = new Date();
 SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); // Escolha o formato desejado
 String dataAtualFormatada = formatoData.format(dataAtual);
+
+String empresa = (String) session.getAttribute("empresa");
+if (empresa == null || empresa.isEmpty()) {
+	RequestDispatcher rd = request.getRequestDispatcher("LoginExpirou.html");
+	rd.forward(request, response);
+	return; // Certifique-se de que o código pare de executar após o redirecionamento
+}
 %>
 <%
 Date agora = new Date();
@@ -32,6 +40,9 @@ JSONArray itensArray = (JSONArray) session.getAttribute("itens");
 
 String showModal = request.getParameter("showModal");
 String vendaIDParam = request.getParameter("vendaID");
+
+VendasDAO dao = new VendasDAO(empresa);
+
 %>
 <html lang="pt-BR">
 <head>
@@ -311,8 +322,8 @@ String vendaIDParam = request.getParameter("vendaID");
 							<h4 class="display-7">Deseja finalizar a venda ?</h4>
 							<button type="button" class="btn btn-secondary"
 								data-bs-dismiss="modal">Não</button>
-							<button id="confirmarPagamento" type="button" class="btn btn-primary" data-bs-toggle="modal"
-					                data-bs-target="#comprovanteVenda">Sim</button>
+							<a type="submit" class="btn btn-primary" 
+				             onclick="submitFormAndShowModal()" id="rel" href="relatorioVenda.jsp" target="_blank" >Sim</a>
 
 						</div>
 
@@ -342,23 +353,37 @@ String vendaIDParam = request.getParameter("vendaID");
 			}
 			}
 			%>
-			 <div class="modal fade" tabindex="-1" id="comprovanteVenda">
-        <div class="modal-dialog" style="min-width: 90%; min-height: 90%; height: 90%;">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <!-- O iframe carrega o relatório via servlet passando o vendaID -->
-                    <iframe id="iframeRelatorio" src="exibirRelatorio?vendaID=<%= vendaIDParam != null ? vendaIDParam : "" %>" width="100%" height="100%" style="border: none;"></iframe>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <a type="button" class="btn btn-primary" onclick="document.getElementById('iframeRelatorio').contentWindow.print();">Imprimir</a>
-                </div>
-            </div>
-        </div>
-    </div>
+			
+
+
+			
+		
+			
 
 
 		</form>
+		
+		      <!-- Modal para o relatório -->
+		<div class="modal fade" tabindex="-1" id="comprovanteVenda"
+			data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog"
+				style="min-width: 90%; min-height: 90%; height: 90%;">
+				<div class="modal-content">
+					<div class="modal-body">
+						<!-- iframe aponta para a página JSP que carrega o relatório -->
+						<iframe id="iframeRelatorio" src="relatorioVenda.jsp" width="100%"
+							height="100%" style="border: none;"></iframe>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Fechar</button>
+						<a type="button" class="btn btn-primary"
+							onclick="document.getElementById('iframeRelatorio').contentWindow.print();">Imprimir</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 		<div class="modal fade" tabindex="-1" id="CancelarVenda">
 			<div class="modal-dialog">
@@ -721,22 +746,7 @@ document.getElementById("carrinho").addEventListener("click", function(event) {
     });
 </script>
 
-  <script>
-        $(document).ready(function(){
-            var showModal = '<%= showModal %>';
-            var vendaID = '<%= vendaIDParam %>';
-            if (showModal === "true" && vendaID) {
-                // Atualiza o src do iframe para carregar o relatório correto
-                document.getElementById('iframeRelatorio').src = 'exibirRelatorio?vendaID=' + vendaID;
-
-                // Abre o modal
-                var comprovanteModal = new bootstrap.Modal(document.getElementById('comprovanteVenda'));
-                comprovanteModal.show();
-            } else if (showModal === "false") {
-                alert("Erro ao gerar o comprovante de venda.");
-            }
-        });
-    </script>
+  
     <script>
     document.getElementById("confirmarPagamento").addEventListener("click", function() {
         // Submete o formulário manualmente
@@ -746,9 +756,68 @@ document.getElementById("carrinho").addEventListener("click", function(event) {
   
     
     </script>
+    <script >
+    document.getElementById('comprovanteVenda').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('iframeRelatorio').src = '';
+    });
 
+    
+    
+    </script>
+    <script>
+    function submitFormAndShowModal() {
+        // Seleciona o formulário de vendas
+        const form = document.getElementById("modalVendas");
+        const formData = new FormData(form);
+
+        // Envia o formulário via AJAX
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json()) // Supondo que o servlet retorna um JSON de confirmação
+        .then(data => {
+            if (data.success) { // Confirmação do backend
+                // Chama o modal para exibir o relatório
+                $('#confirmacaoModal').modal('hide'); // Biblioteca Bootstrap para modais
+            } else {
+                alert("Erro ao inserir a venda.");
+            }
+        })
+        .catch(error => console.error("Erro na solicitação:", error));
+    }
+
+    
+    </script>
+   
+
+
+	<script>
+	document.getElementById("rel").addEventListener("click", function() {
+	    // Abre o relatório em uma nova aba
+	    window.open("relatorioVenda.jsp", "_blank");
+
+	    // Fecha o modal e remove o backdrop manualmente
+	    let modalElement = document.getElementById("confirmacaoModal");
+	    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+
+	    if (modalInstance) {
+	        modalInstance.hide();
+
+	        // Aguardar um curto período para garantir que o modal seja fechado antes de remover o backdrop
+	        setTimeout(() => {
+	            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+	            document.body.classList.remove('modal-open');
+	            document.body.style.paddingRight = '';
+	            window.location.href = "realizarVendas.jsp";
+	            
+	        }, 200); // Delay de 200ms para garantir o fechamento do modal
+	    }
+	});
 
 	
+	
+	</script>
 
 
 

@@ -8,7 +8,9 @@
 <%
 String empresa = (String) session.getAttribute("empresa");
 if (empresa == null || empresa.isEmpty()) {
-    throw new RuntimeException("O nome da empresa não está definido na sessão.");
+    RequestDispatcher rd = request.getRequestDispatcher("LoginExpirou.html");
+    rd.forward(request, response);
+    return; // Certifique-se de que o código pare de executar após o redirecionamento
 }
 List<Clientes> lista; // Declara a lista
 ClientesDAO dao = new ClientesDAO(empresa);

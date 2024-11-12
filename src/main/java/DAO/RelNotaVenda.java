@@ -27,7 +27,7 @@ public class RelNotaVenda {
         this.con = new ConectionFactory().getConnection(empresa);
     }
 
-    public JasperPrint gerarRelatorio(String layoutPath, int vendaID) throws JRException, SQLException, ClassNotFoundException, IOException {
+    public JasperPrint gerarRelatorio(String layoutPath) throws JRException, SQLException, ClassNotFoundException, IOException {
         // Carrega o design do relatório a partir do ClassLoader
         InputStream inputStream = getClass().getResourceAsStream("/" + layoutPath);
 
@@ -46,11 +46,11 @@ public class RelNotaVenda {
 
         // Parâmetros do relatório
         Map<String, Object> parametros = new HashMap<>();
-        parametros.put("ID_VENDA", vendaID);
+    
 
         // Preenche o relatório
         JasperPrint impressao = JasperFillManager.fillReport(relatorio, parametros, con);
-        LOGGER.log(Level.INFO, "Relatório preenchido com sucesso para vendaID: " + vendaID);
+        LOGGER.log(Level.INFO, "Relatório preenchido com sucesso para vendaID: " );
 
         // Fecha recursos
         inputStream.close();

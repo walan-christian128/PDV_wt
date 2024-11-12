@@ -12,8 +12,11 @@
 <%
 String empresa = (String) session.getAttribute("empresa");
 if (empresa == null || empresa.isEmpty()) {
-    throw new RuntimeException("O nome da empresa não está definido na sessão.");
+    RequestDispatcher rd = request.getRequestDispatcher("LoginExpirado.jsp");
+    rd.forward(request, response);
+    return; // Certifique-se de que o código pare de executar após o redirecionamento
 }
+
 List<Fornecedores> lista; // Declara a lista
 FornecedoresDAO dao = new FornecedoresDAO(empresa);
 lista = dao.listaFornecedores(); // Atribui o resultado da busca à lista exibida no select

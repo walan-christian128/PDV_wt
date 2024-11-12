@@ -3,11 +3,14 @@ package Controller;
 import jakarta.security.auth.message.callback.PrivateKeyCallback.Request;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import java.io.BufferedReader;
@@ -15,8 +18,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,10 +57,12 @@ import java.io.InputStream;
  */
 
 @WebServlet(urlPatterns = { "/selecionarClienteProdutos", "/inserirItens", "/InseirVendaEintens", "/PeriodoVenda",
-		"/dia", "/maisVendidos" })
+		"/dia", "/maisVendidos","/exibirRelatorio" })
+@MultipartConfig
 
 public class vendasServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	 private static final Logger LOGGER = Logger.getLogger(vendasServer.class.getName());
 
 	double total, subtotal, lucro, preco, meuPreco;
 
@@ -106,10 +115,49 @@ public class vendasServer extends HttpServlet {
 		case "/maisVendidos":
 			maisVendidos(request, response);
 			break;
+		case "/exibirRelatorio":
+			gerarRelatorio(request, response);
+			break;
 		default:
 			response.getWriter().append("Ação não reconhecida.");
 			break;
 		}
+	}
+	@SuppressWarnings("unused")
+	protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    String empresa = (String) session.getAttribute("empresa");
+
+	    // Verificar se o nome da empresa está disponível na sessão
+	    if (empresa == null) {
+	        response.getWriter().write("Empresa não fornecida.");
+	        LOGGER.log(Level.WARNING, "Empresa não fornecida.");
+	        return;
+	    }
+
+	    try {
+	        // Instancia a classe responsável pela geração do relatório
+	        RelNotaVenda relatorio = new RelNotaVenda(empresa);
+	        
+	        // Gera o relatório
+	        JasperPrint jasperPrint = relatorio.gerarRelatorio("RelatoriosJasper/pdvRelComprovanteVenda.jrxml");
+	        LOGGER.log(Level.INFO, "Relatório gerado com sucesso para a empresa: " + empresa);
+
+	        // Define o tipo de resposta como PDF
+	        response.setContentType("application/pdf");
+	        response.setHeader("Content-Disposition", "inline; filename=relatorio_venda.pdf");
+
+	        // Exporta o relatório para o fluxo de saída HTTP
+	        try (OutputStream outStream = response.getOutputStream()) {
+	            JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
+	            outStream.flush();
+	            request.setAttribute("rel", outStream);  
+	        }
+
+	    } catch (JRException | SQLException | ClassNotFoundException e) {
+	        LOGGER.log(Level.SEVERE, "Erro ao gerar relatório para a empresa: " + empresa, e);
+	        response.getWriter().write("Erro ao gerar relatório: " + e.getMessage());
+	    }
 	}
 
 	private void maisVendidos(HttpServletRequest request, HttpServletResponse response)
@@ -128,6 +176,7 @@ public class vendasServer extends HttpServlet {
 				Date datainicalFormata = sdf.parse(dataVendainicio);
 				Date datafinalFormata = sdf.parse(dataVendafim);
 				VendasDAO dao = new VendasDAO(empresa);
+				
 
 				ArrayList<ItensVenda> lista_2 = (ArrayList<ItensVenda>) dao.maisVendidos(datainicalFormata,
 						datafinalFormata);
@@ -287,6 +336,9 @@ public class vendasServer extends HttpServlet {
 				session.removeAttribute("totalVenda");
 				session.removeAttribute("itens");
 				session.removeAttribute("lucro");
+				session.removeAttribute("desconto");
+				session.removeAttribute("idProd");
+				session.removeAttribute("desProd");
 
 				response.sendRedirect("realizarVendas.jsp");
 				
@@ -381,12 +433,21 @@ public class vendasServer extends HttpServlet {
 
 				PrintWriter out = response.getWriter();
 				out.println(newRow);
+				
+				session.removeAttribute("idProd");
+				session.removeAttribute("desProd");
+				session.removeAttribute("qtdProd");
+				session.removeAttribute("precoProd");
+				session.removeAttribute("compraProd");
+			
 
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		      
 
 	}
 

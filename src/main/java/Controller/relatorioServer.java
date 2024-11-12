@@ -1,4 +1,4 @@
-package Controller;
+/*package Controller;
 
 
 import net.sf.jasperreports.engine.JRException;
@@ -71,4 +71,4 @@ public class relatorioServer extends HttpServlet {
             response.getWriter().write("Erro ao gerar relatório: " + e.getMessage());
         }
     }
-}
+}*/
