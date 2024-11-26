@@ -329,5 +329,64 @@ public class VendasDAO {
 		return lista;
 		
 	}
+	public double lucroVenda(int id) {
+	    double totalVenda = 0;
+
+	    String sql = "SELECT SUM(produto.preco_de_venda - produto.preco_de_compra) AS lucro_da_venda "
+	               + "FROM tb_produtos AS produto "
+	               + "INNER JOIN tb_itensvendas AS itens ON itens.produto_id = produto.id "
+	               + "WHERE itens.venda_id = ?";
+
+	    try (PreparedStatement stmt = con.prepareStatement(sql)) {
+	        stmt.setInt(1, id);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) { // Só existe um resultado
+	                totalVenda = rs.getDouble("lucro_da_venda");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace(); // Loga o erro no console
+	    }
+
+	    return totalVenda;
+	}
+	public double lucroPorPeriod(Date dataInicio, Date dataFim){
+	
+		double totalLucro = 0;
+		
+		try {
+			String sql =  "   SELECT SUM(PRODUTO.PRECO_DE_VENDA - PRODUTO.PRECO_DE_COMPRA) AS LUCRO_DA_VENDA "
+					    + "   FROM TB_PRODUTOS AS PRODUTO "
+					    + "   INNER JOIN TB_ITENSVENDAS AS ITENS ON ITENS.PRODUTO_ID = PRODUTO.ID "
+					    + "   INNER JOIN TB_VENDAS      AS VENDA ON VENDA.ID = ITENS.VENDA_ID "
+					    + "   WHERE "
+					    + "   DATE(VENDA.DATA_VENDA) BETWEEN ? AND ? ";
+			
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setDate(1, new java.sql.Date(dataInicio.getTime()));
+			stmt.setDate(2, new java.sql.Date(dataFim.getTime()));
+			
+			ResultSet rs = stmt.executeQuery();
+			 if(rs.next()){
+				 
+				 totalLucro = rs.getDouble("LUCRO_DA_VENDA");
+				 
+				
+				
+				 
+				 
+				 
+			 }
+			 
+			
+		} catch (SQLException e) {
+			
+		}
+		return totalLucro;
+		
+	}
+
+	
+
 
 }

@@ -57,7 +57,7 @@ import java.io.InputStream;
  */
 
 @WebServlet(urlPatterns = { "/selecionarClienteProdutos", "/inserirItens", "/InseirVendaEintens", "/PeriodoVenda",
-		"/dia", "/maisVendidos","/exibirRelatorio" })
+		"/dia", "/maisVendidos","/exibirRelatorio","/lucroVenda" ,"/lucroPeriodo" })
 @MultipartConfig
 
 public class vendasServer extends HttpServlet {
@@ -118,11 +118,76 @@ public class vendasServer extends HttpServlet {
 		case "/exibirRelatorio":
 			gerarRelatorio(request, response);
 			break;
+		case "/lucroVenda":
+			lucroVenda(request, response);
+			break;
+		case "/lucroPeriodo":
+			lucroPeriodo(request, response);
+			break;
 		default:
 			response.getWriter().append("Ação não reconhecida.");
 			break;
 		}
 	}
+	private void lucroPeriodo(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String datalucroinicio = request.getParameter("dataIniciallucro");
+		String datalucrofim = request.getParameter("dataFinallucro");
+		
+		HttpSession session = request.getSession();
+		String empresa = (String) session.getAttribute("empresa");
+
+		if (datalucroinicio != null && datalucrofim != null) {
+			String fomatoData = "dd/MM/yyyy";
+			SimpleDateFormat sdf = new SimpleDateFormat(fomatoData);
+
+			try {
+				Date datainicalFormata = sdf.parse(datalucroinicio);
+				Date datafinalFormata = sdf.parse(datalucrofim);
+				VendasDAO dao = new VendasDAO(empresa);
+				
+
+				double lucroPeriodo = dao.lucroPorPeriod(datainicalFormata, datafinalFormata);
+
+				request.setAttribute("totalLucro", lucroPeriodo);
+
+				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+				dispatcher.forward(request, response);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
+
+	}
+	protected void lucroVenda(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String codigoVenda = request.getParameter("CodigoVenda");
+		int idVenda = Integer.parseInt(codigoVenda);
+
+		HttpSession session = request.getSession();
+		String empresa = (String) session.getAttribute("empresa");
+
+		try {
+			
+
+			VendasDAO dao = new VendasDAO(empresa);
+			double lucroVenda = dao.lucroVenda(idVenda);
+
+			request.setAttribute("lucro", lucroVenda);
+			request.setAttribute("vendaCodigo", idVenda);
+		
+			
+			RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+			dispatcher.forward(request, response);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Handle exception appropriately
+		}
+		
+	}
+	
 	@SuppressWarnings("unused")
 	protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    HttpSession session = request.getSession();
@@ -183,7 +248,7 @@ public class vendasServer extends HttpServlet {
 
 				request.setAttribute("maisVendidos", lista_2);
 
-				RequestDispatcher dispatcher = request.getRequestDispatcher("menu.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
 				dispatcher.forward(request, response);
 
 			} catch (Exception e) {
@@ -210,7 +275,8 @@ public class vendasServer extends HttpServlet {
 
 			request.setAttribute("totalVenda", totalVenda);
 			request.setAttribute("data", data);
-			RequestDispatcher dispatcher = request.getRequestDispatcher("menu.jsp");
+			
+			RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
 			dispatcher.forward(request, response);
 
 		} catch (Exception e) {
@@ -239,7 +305,8 @@ public class vendasServer extends HttpServlet {
 				ArrayList<Vendas> lista_2 = (ArrayList<Vendas>) dao.totalPorPeriodo(datainicalFormata,
 						datafinalFormata);
 				request.setAttribute("periodo", lista_2);
-				RequestDispatcher dispatcher = request.getRequestDispatcher("menu.jsp");
+				
+				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
 				dispatcher.forward(request, response);
 
 			} catch (Exception e) {

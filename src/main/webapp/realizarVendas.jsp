@@ -244,11 +244,11 @@ VendasDAO dao = new VendasDAO(empresa);
 			</div>
 
 
-			<div class=" col-md-3">
-				<label class="form-label">lucro:</label> <input type="text"
-					id="lucro" class="form-control" name="lucro"
-					value="<%=session.getAttribute("lucro") != null ? session.getAttribute("lucro").toString() : "0.00"%>">
-			</div>
+			<div class="col-md-3">
+    <label class="form-label">Lucro:</label> 
+    <input type="text" id="lucro" class="form-control" name="lucro"
+           value="<%=session.getAttribute("lucro") != null ? session.getAttribute("lucro").toString() : "0.00"%>">
+</div>
 			<div class=" col-md-3">
 				<label class="form-label">Desconto:</label> <input type="text"
 					class="form-control" name="desconto"
