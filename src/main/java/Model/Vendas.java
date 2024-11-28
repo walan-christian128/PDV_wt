@@ -8,7 +8,6 @@ public class Vendas {
     private String data_venda;
     private double total_venda;
     private String obs;
-    private double lucro;
     private double desconto;
     private String formaPagamento;
     
@@ -72,11 +71,5 @@ public class Vendas {
         this.obs = obs;
     }
 
-    public double getLucro() {
-        return lucro;
-    }
-
-    public void setLucro(double lucro) {
-        this.lucro = lucro;
-    }
+    
 }

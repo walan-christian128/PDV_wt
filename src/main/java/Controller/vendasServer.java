@@ -151,7 +151,7 @@ public class vendasServer extends HttpServlet {
 
 				request.setAttribute("totalLucro", lucroPeriodo);
 
-				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
 				dispatcher.forward(request, response);
 
 			} catch (Exception e) {
@@ -178,7 +178,7 @@ public class vendasServer extends HttpServlet {
 			request.setAttribute("vendaCodigo", idVenda);
 		
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
 			dispatcher.forward(request, response);
 
 		} catch (Exception e) {
@@ -248,7 +248,7 @@ public class vendasServer extends HttpServlet {
 
 				request.setAttribute("maisVendidos", lista_2);
 
-				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
 				dispatcher.forward(request, response);
 
 			} catch (Exception e) {
@@ -276,7 +276,7 @@ public class vendasServer extends HttpServlet {
 			request.setAttribute("totalVenda", totalVenda);
 			request.setAttribute("data", data);
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
 			dispatcher.forward(request, response);
 
 		} catch (Exception e) {
@@ -306,7 +306,7 @@ public class vendasServer extends HttpServlet {
 						datafinalFormata);
 				request.setAttribute("periodo", lista_2);
 				
-				RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
 				dispatcher.forward(request, response);
 
 			} catch (Exception e) {
@@ -352,7 +352,6 @@ public class vendasServer extends HttpServlet {
 			obj.setData_venda(dataVenda);
 			obj.setTotal_venda(Double.parseDouble(totalVenda));
 			obj.setObs(Obs);
-			obj.setLucro(Double.parseDouble(lucro));
 			obj.setDesconto(Double.parseDouble(desconto));
 			obj.setFormaPagamento(formaPagamento);
 

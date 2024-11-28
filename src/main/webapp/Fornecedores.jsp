@@ -200,7 +200,7 @@ td a {
 					placeholder="Pesquisar fornecedor pelo nome">
 				<div id="tables-container" class="container-sm">
 					<div id="table-container" class="container-sm">
-						<table id="tabela"class="table table-dark table-bordered table-hover">
+						<table id="tabela"class="table table-dark table-striped-columns table-hover">
 							<thead>
 								<h2>Fornecedores Cadastrados</h2>
 

@@ -38,9 +38,9 @@ public class VendasDAO {
 
 	public void cadastrarVenda(Vendas obj) {
 		try {
-			System.out.println("VendasDAO.cadastrarVenda - Cliente: " + obj.getCliente());
+		
 
-			String sql = "insert into tb_vendas(cliente_id,data_venda,total_venda,observacoes,lucro,desconto,forma_pagamento)values(?,?,?,?,?,?,?)";
+			String sql = "insert into tb_vendas(cliente_id,data_venda,total_venda,observacoes,desconto,forma_pagamento)values(?,?,?,?,?,?)";
 			PreparedStatement stmt = con.prepareStatement(sql);
 
 			if (obj.getCliente() != null) {
@@ -53,9 +53,8 @@ public class VendasDAO {
 			stmt.setString(2, obj.getData_venda());
 			stmt.setDouble(3, obj.getTotal_venda());
 			stmt.setString(4, obj.getObs());
-			stmt.setDouble(5, obj.getLucro());
-			stmt.setDouble(6, obj.getDesconto());
-			stmt.setString(7, obj.getformaPagamento());
+			stmt.setDouble(5, obj.getDesconto());
+			stmt.setString(6, obj.getformaPagamento());
 
 			stmt.execute();
 
@@ -99,7 +98,7 @@ public class VendasDAO {
 			// 1 passo criar lista de Vendas//
 			List<Vendas> lista = new ArrayList<>();
 
-			String sql = "select v.id,date_format(v.data_venda,'%d/%m/%Y')as data_formatada,c.nome,v.total_venda,v.observacoes,v.lucro,v.desconto from tb_vendas as v "
+			String sql = "select v.id,date_format(v.data_venda,'%d/%m/%Y')as data_formatada,c.nome,v.total_venda,v.observacoes,v.desconto from tb_vendas as v "
 					+ "inner join tb_clientes as c on(v.cliente_id = c.id)where v.data_venda BETWEEN? AND?";
 
 			PreparedStatement stmt = con.prepareStatement(sql);
@@ -117,7 +116,6 @@ public class VendasDAO {
 				c.setNome(rs.getString("c.nome"));
 				obj.setTotal_venda(rs.getDouble("v.total_venda"));
 				obj.setObs(rs.getString("v.observacoes"));
-				obj.setLucro(rs.getDouble("v.lucro"));
 				obj.setDesconto(rs.getDouble("v.desconto"));
 
 				obj.setCliente(c);
@@ -139,7 +137,7 @@ public class VendasDAO {
 	 public List<Vendas> listarVendasdoDia() {
 	        List<Vendas> lista = new ArrayList<>();
 	        String sql = "select v.id, date_format(v.data_venda, '%d/%m/%Y %H:%i:%s') as data_formatada, "
-	                   + "c.nome, v.total_venda, v.observacoes, v.lucro, v.desconto, v.forma_pagamento "
+	                   + "c.nome, v.total_venda, v.observacoes, v.desconto, v.forma_pagamento "
 	                   + "from tb_vendas as v "
 	                   + "left join tb_clientes as c on (v.cliente_id = c.id) "
 	                   + "where date(v.data_venda) = ?";
@@ -161,7 +159,6 @@ public class VendasDAO {
 	                    c.setNome(rs.getString("c.nome"));
 	                    obj.setTotal_venda(rs.getDouble("v.total_venda"));
 	                    obj.setObs(rs.getString("v.observacoes"));
-	                    obj.setLucro(rs.getDouble("v.lucro"));
 	                    obj.setDesconto(rs.getDouble("v.desconto"));
 	                    obj.setFormaPagamento(rs.getString("v.forma_pagamento"));
 

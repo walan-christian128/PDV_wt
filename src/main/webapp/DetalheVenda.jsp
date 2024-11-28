@@ -21,19 +21,18 @@ lista = Vdao.listarVendasdoDia();
 <head>
 <meta charset="utf-8">
 <title>Detalhe Venda</title>
-   <link rel="stylesheet" href="style.css">
+  
    <link rel="icon"
 	href="img/2992664_cart_dollar_mobile_shopping_smartphone_icon.png">
-    <link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-	crossorigin="anonymous">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Q/jnqA9/ctw53zwTwj9tdG1x8czgkF+4hJbUBt1ZZbPr42N2zrgfmjjM+KAX1nbj" crossorigin="anonymous">
 </head>
 <body>
 	<%@ include file="menu.jsp"%>
+	<div class="container mt-4">
+	<div class="row">
+	<div class="col-md-6">
 	<div class="table-container">
-		<table id="VendaDiaria">
+		<table id="VendaDiaria" class="table table-dark table-striped table-hover">
 			<thead>
 				<tr>
 					<th>Descricão</th>
@@ -66,8 +65,10 @@ lista = Vdao.listarVendasdoDia();
 		 <a  href="Home.jsp" type="button" class= "btn btn-danger">Voltar</a>
 		 </div>
 		
+   </div>
+   </div>
 
-
+	</div>
 	</div>
 	
 	
