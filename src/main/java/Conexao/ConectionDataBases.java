@@ -17,7 +17,7 @@ public class ConectionDataBases {
     // Método para obter a conexão com o banco de dados
     public Connection getConectionDataBases() throws SQLException {
         // Crie a URL de conexão utilizando o nome do banco de dados
-        String url = "jdbc:mysql://192.168.1.2:3307/" + this.databaseName;
+        String url = "jdbc:mysql://localhost:3307/" + this.databaseName;
         // Retorne a conexão com o banco de dados
         return DriverManager.getConnection(url, "walan", "359483wa@");
     }
