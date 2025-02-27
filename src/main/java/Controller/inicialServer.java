@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.naming.NamingException;
+
 import jakarta.mail.Session;
 import jakarta.mail.Message;
 
@@ -81,7 +83,12 @@ public class inicialServer extends HttpServlet {
 
 		} else if (action.equals("/AtualizaçãoSenha")) {
 			try {
-				atualizaSenha(request, response);
+				try {
+					atualizaSenha(request, response);
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} catch (ServletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -100,7 +107,7 @@ public class inicialServer extends HttpServlet {
 	}
 
 	private void atualizaSenha(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, SQLException, ClassNotFoundException {
+			throws ServletException, IOException, SQLException, ClassNotFoundException, NamingException {
 		String senha = request.getParameter("senha");
 		String senha2 = request.getParameter("senha2");
 		String email = request.getParameter("email");
@@ -142,7 +149,7 @@ public class inicialServer extends HttpServlet {
 			if (emailExiste) {
 				// Enviar OTP por e-mail
 				String to = email;
-				String resetLink = "http://localhost:8080/Distribuidora_de_bebidas_silva/RedefinirSenha.jsp"; // Gera o
+				String resetLink = "http://192.168.1.2:8080/PDV/RedefinirSenha.jsp"; // Gera o
 																												// OTP
 																												// aqui
 

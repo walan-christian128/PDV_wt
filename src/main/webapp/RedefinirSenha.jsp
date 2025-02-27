@@ -20,8 +20,7 @@ String erro = (String) request.getAttribute("erro");
 	crossorigin="anonymous">
 </head>
 <body
-	style="background-image: url('img/f417de95-2534-4362-8c7f-85a6245f3feb.jpeg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
-
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
 
 	<div class="container mt-4">
 		<h1 class="">Redefinição de senha</h1>

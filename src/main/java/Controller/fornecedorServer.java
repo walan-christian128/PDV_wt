@@ -9,8 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-
+import javax.naming.NamingException;
 
 import DAO.FornecedoresDAO;
 import Model.Fornecedores;
@@ -50,6 +51,12 @@ public class fornecedorServer extends HttpServlet {
 				} catch (ClassNotFoundException | ServletException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    } else if (action.equals("/atualizarFornecedor")) {
 		        try {
@@ -57,11 +64,23 @@ public class fornecedorServer extends HttpServlet {
 				} catch (ClassNotFoundException | ServletException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    } else if (action.equals("/selectFornecedor")) {
 		        try {
 					modalSelect(request, response);
 				} catch (ClassNotFoundException | ServletException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NamingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -72,12 +91,18 @@ public class fornecedorServer extends HttpServlet {
 				} catch (ClassNotFoundException | ServletException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    }
 
 	}
 
-	private void apagarFornecedor(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException, ClassNotFoundException {
+	private void apagarFornecedor(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
 		String idFornecedor = request.getParameter("id");
@@ -95,7 +120,7 @@ public class fornecedorServer extends HttpServlet {
 	}
 
 	private void modalSelect(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
 		String idFornecedor = request.getParameter("id");
@@ -141,7 +166,7 @@ public class fornecedorServer extends HttpServlet {
 	}
 
 	private void atualizarFornecedor(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
 		String idFornecedor = request.getParameter("id");
@@ -211,7 +236,7 @@ public class fornecedorServer extends HttpServlet {
 	}
 
 	private void CadastrarFornecedor(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
 		String idFornecedor = request.getParameter("id");

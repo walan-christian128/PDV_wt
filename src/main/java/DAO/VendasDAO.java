@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.naming.NamingException;
+
 public class VendasDAO {
 
 	 private Connection con;
 	 private ConectionDataBases connectionFactory;
 
-	 public VendasDAO(String databaseName) {
+	 public VendasDAO(String databaseName) throws NamingException {
 	        // Inicialize a conexão com o banco de dados
 	        this.connectionFactory = new ConectionDataBases(databaseName);
 	        try {

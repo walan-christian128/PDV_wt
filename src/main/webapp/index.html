@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>barra navegacao</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, #607d8b, #b0c4d6); /* Gradiente mais prÃ³ximo do logo */
+            padding: 0 20px;
+            height: 60px; /* Garantir que a barra tenha o mesmo tamanho que o logo */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar img {
+            height: 100%; /* Faz o logo ocupar toda a altura da barra */
+            object-fit: contain; /* Ajusta a imagem sem distorÃ§Ãµes */
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #0078d7;
+            font-size: 16px;
+            margin-left: 10px;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <!-- Replace the src value with the correct path to your logo file -->
+        <img src="img/wttech.png">
+        
+    </div>
+
+   
+</body>
+</html>

@@ -15,6 +15,10 @@
 	href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
 </head>
 <h1>Editar Clientes</h1>
+<body
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
+ <%@ include file="index.html"%>
+	<%@ include file="menu.jsp"%>
 <div id="form-container"
 	class="form-control form-control-sm m-0 d-flex ">
 
@@ -241,6 +245,8 @@
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
 
 </div>
+</body>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#telefone').mask('(00) - 0000-0000');

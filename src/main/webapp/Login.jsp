@@ -19,6 +19,8 @@ String erro = (String) request.getAttribute("erro");
 	integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
 	crossorigin="anonymous">
 <link rel="stylesheet" href="style_login.css">
+<link rel="icon"
+	href="img/2992664_cart_dollar_mobile_shopping_smartphone_icon.png">
 
 <style>
 /* Estilo personalizado para o tÃ­tulo */
@@ -74,7 +76,7 @@ String erro = (String) request.getAttribute("erro");
 </style>
 </head>
 <body
-	style="background-image: url('img/f417de95-2534-4362-8c7f-85a6245f3feb.jpeg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
 
 	<div class="imagem">
 		<div class="container h-100">
@@ -98,11 +100,15 @@ String erro = (String) request.getAttribute("erro");
 								class="form-control form-control-lg" id="userPassword"
 								type="password" aria-label="Senha" placeholder="Senha" name="senha">
 						</div>
-						
-						<div class="form-group ls-login-enpressa">
-							<label for="userEmpresa" class="userEmpresa" style="background-color: white;">Empresa</label> <input
+
+							
+
+
+							<div class="form-group ls-login-enpressa">
+							<label for="userEmpresa" class="userEmpresa">Empresa</label> <input
 								class="form-control" id="userEmpresa"
 								type="text"  placeholder= "Empresa: da mesma forma do cadastro" name="empresa">
+								
 						</div>
 
 						
@@ -125,15 +131,14 @@ String erro = (String) request.getAttribute("erro");
 
 						<a href="RecuperarSenha.jsp" class="ls-login-forgot">Esqueci minha senha</a>
 
-
-			
+                       
 
 
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	
 
 	
 </body>

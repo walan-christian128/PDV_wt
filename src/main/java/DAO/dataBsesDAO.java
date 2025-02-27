@@ -7,13 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.NamingException;
+
 import Conexao.ConectionDataBases;
 
 public class dataBsesDAO {
 	 private Connection con;
 	 private ConectionDataBases connectionFactory;
 
-    public dataBsesDAO(String dataBaseNames) throws ClassNotFoundException {
+    public dataBsesDAO(String dataBaseNames) throws ClassNotFoundException, NamingException {
     	 this.connectionFactory = new ConectionDataBases(dataBaseNames);
 	        try {
 	            this.con = connectionFactory.getConectionDataBases();

@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.naming.NamingException;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,7 +22,7 @@ public class ClientesDAO {
     private Connection con;
     private ConectionDataBases connectionFactory;
 
-    public ClientesDAO(String dataBaseNames) throws ClassNotFoundException {
+    public ClientesDAO(String dataBaseNames) throws ClassNotFoundException, NamingException {
     	 // Inicialize a conexão com o banco de dados
         this.connectionFactory = new ConectionDataBases(dataBaseNames);
         try {

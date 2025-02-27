@@ -15,6 +15,9 @@
 	href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
 </head>
 <h1>Editar Fornecedor</h1>
+<body>
+<%@ include file="index.html"%>
+	<%@ include file="menu.jsp"%>
 <div id="form-container"
 	class="form-control form-control-sm m-0 d-flex ">
 
@@ -229,6 +232,7 @@
 
 		</div>
 	</div>
+	</body>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

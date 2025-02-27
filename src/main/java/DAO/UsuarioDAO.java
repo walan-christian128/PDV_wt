@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.naming.NamingException;
+
 import Conexao.ConectionDataBases;
 import Model.PasswordUtil;
 import Model.Usuario;
@@ -16,7 +18,7 @@ public class UsuarioDAO {
 	private Connection con;
 	private ConectionDataBases connectionFactory;
 
-	public UsuarioDAO(String databaseName) {
+	public UsuarioDAO(String databaseName) throws NamingException {
 		this.connectionFactory = new ConectionDataBases(databaseName);
 		try {
 			this.con = connectionFactory.getConectionDataBases();
@@ -91,7 +93,7 @@ public class UsuarioDAO {
 		return loginValido;
 	}
 
-	public boolean enviaEmail(String email, String empresa) throws SQLException, ClassNotFoundException {
+	public boolean enviaEmail(String email, String empresa) throws SQLException, ClassNotFoundException, NamingException {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;

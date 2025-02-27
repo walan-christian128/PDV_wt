@@ -47,7 +47,9 @@ td a {
 }
 </style>
 </head>
-<body>
+<body
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
+    <%@ include file="index.html"%>
 	<%@ include file="menu.jsp"%>
 	<div id="container" class="d-flex container-fluid ">
 

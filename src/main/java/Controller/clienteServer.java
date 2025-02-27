@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-
+import javax.naming.NamingException;
 
 import DAO.ClientesDAO;
 import Model.Clientes;
@@ -57,6 +57,9 @@ public class clienteServer extends HttpServlet {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    } else if (action.equals("/atualizarClientes")) {
 		        try {
@@ -70,6 +73,9 @@ public class clienteServer extends HttpServlet {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    } else if (action.equals("/selectClientes")) {
 		        try {
@@ -81,6 +87,9 @@ public class clienteServer extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NamingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -97,6 +106,9 @@ public class clienteServer extends HttpServlet {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (NamingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 		    }
 
@@ -104,7 +116,7 @@ public class clienteServer extends HttpServlet {
 	
 	
 
-	private void apagarFornecedor(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException, ClassNotFoundException {
+	private void apagarFornecedor(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
         String empresa = (String) session.getAttribute("empresa"); 
 		Clientes obj = new Clientes();
@@ -121,7 +133,7 @@ public class clienteServer extends HttpServlet {
 	}
 
 	private void modalSelect(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
         String empresa = (String) session.getAttribute("empresa"); 
 		Clientes obj = new Clientes();
@@ -167,7 +179,7 @@ public class clienteServer extends HttpServlet {
 	}
 
 	private void atualizarClientes(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
         String empresa = (String) session.getAttribute("empresa"); 
 		Clientes obj = new Clientes();
@@ -236,7 +248,7 @@ public class clienteServer extends HttpServlet {
 	}
 
 	private void CadastrarClientes(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
         String empresa = (String) session.getAttribute("empresa"); 
 		Clientes obj = new Clientes();

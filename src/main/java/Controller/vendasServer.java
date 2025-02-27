@@ -57,14 +57,14 @@ import java.io.InputStream;
  */
 
 @WebServlet(urlPatterns = { "/selecionarClienteProdutos", "/inserirItens", "/InseirVendaEintens", "/PeriodoVenda",
-		"/dia", "/maisVendidos","/exibirRelatorio","/lucroVenda" ,"/lucroPeriodo" })
+		"/dia", "/maisVendidos","/exibirRelatorio","/lucroVenda" ,"/lucroPeriodo","/desconto" })
 @MultipartConfig
 
 public class vendasServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	 private static final Logger LOGGER = Logger.getLogger(vendasServer.class.getName());
 
-	double total, subtotal, lucro, preco, meuPreco;
+	double total, subtotal, preco, meuPreco;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -124,11 +124,59 @@ public class vendasServer extends HttpServlet {
 		case "/lucroPeriodo":
 			lucroPeriodo(request, response);
 			break;
+		case "/desconto":
+			descontoVenda(request, response);
+			break;
 		default:
 			response.getWriter().append("Ação não reconhecida.");
 			break;
 		}
 	}
+	protected void descontoVenda(HttpServletRequest request, HttpServletResponse response) {
+	    try {
+	        // Obtém os parâmetros do formulário
+	        String descontotela = request.getParameter("desconto");
+	        String totalVenda = request.getParameter("totalVendaAtualizado");
+
+	        if (descontotela != null && totalVenda != null) {
+	            try {
+	                // Conversão de strings para double
+	                double descontoValor = Double.parseDouble(descontotela);
+	                double vendaTela = Double.parseDouble(totalVenda);
+
+	                // Calcula o valor final com desconto
+	                double descontoFinal = vendaTela - descontoValor;
+
+	                // Atribui o resultado como atributo na requisição
+	                HttpSession session = request.getSession();
+	                session.setAttribute("totalVendaAtualizado", descontoFinal);
+
+	                
+
+	                // Encaminha a requisição para o JSP
+	                RequestDispatcher dispatcher = request.getRequestDispatcher("realizarVendas.jsp");
+	                dispatcher.forward(request, response);
+
+	            } catch (NumberFormatException e) {
+	                e.printStackTrace();
+	                response.getWriter().println("Erro: valores inválidos para cálculo.");
+	            }
+	        } else {
+	            response.getWriter().println("Erro: parâmetros 'desconto' e 'totalVenda' não enviados.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        try {
+				response.getWriter().println("Erro interno no servidor: " + e.getMessage());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    }
+	}
+
+
+
 	private void lucroPeriodo(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String datalucroinicio = request.getParameter("dataIniciallucro");
@@ -273,7 +321,7 @@ public class vendasServer extends HttpServlet {
 			VendasDAO dao = new VendasDAO(empresa);
 			double totalVenda = dao.retornaTotalVendaPorData(dataVendaInf);
 
-			request.setAttribute("totalVenda", totalVenda);
+			request.setAttribute("totalVenda2", totalVenda);
 			request.setAttribute("data", data);
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("Home.jsp");
@@ -324,9 +372,8 @@ public class vendasServer extends HttpServlet {
 
 		String idCli = request.getParameter("cliId");
 		String dataVenda = request.getParameter("data");
-		String totalVenda = request.getParameter("totalVenda");
+		String totalVenda = request.getParameter("totalVendaAtualizado");
 		String Obs = request.getParameter("observacao");
-		String lucro = request.getParameter("lucro");
 		String desconto = request.getParameter("desconto");
 		String formaPagamento = request.getParameter("formaPagamento");
 
@@ -336,7 +383,7 @@ public class vendasServer extends HttpServlet {
 
 			
 
-			Double lucro2 = Double.parseDouble(lucro);
+			
 			if (idCli != null && !idCli.isEmpty() && !idCli.equals("0")) {
 				// Se houver ID do cliente, atribui ao objeto
 				Clientes objCli = new Clientes();
@@ -368,7 +415,7 @@ public class vendasServer extends HttpServlet {
 					JSONObject linha = itensArray.getJSONObject(i);
 
 					total = 0.0;
-					lucro2 = 0.0;
+					
 
 					String idProdVenda = linha.getString("idProd");
 					String qtdProd = linha.getString("qtdProd");
@@ -398,10 +445,9 @@ public class vendasServer extends HttpServlet {
 				}
 
 				total = 0.0;
-				lucro2 = 0.0;
-				session.removeAttribute("totalVenda");
+			
+				session.removeAttribute("totalVendaAtualizado");
 				session.removeAttribute("itens");
-				session.removeAttribute("lucro");
 				session.removeAttribute("desconto");
 				session.removeAttribute("idProd");
 				session.removeAttribute("desProd");
@@ -418,7 +464,6 @@ public class vendasServer extends HttpServlet {
 		System.out.println("Data Venda: " + dataVenda);
 		System.out.println("Total Venda: " + totalVenda);
 		System.out.println("Observação: " + Obs);
-		System.out.println("Lucro: " + lucro);
 		System.out.println("Desconto: " + desconto);
 		System.out.println("Forma de Pagamento: " + formaPagamento);
 
@@ -455,14 +500,13 @@ public class vendasServer extends HttpServlet {
 				// Calculando o subtotal
 				subtotal = qtdPrdo * preco;
 				total += subtotal;
-				lucro += preco - meuPreco;
 
 				request.setAttribute("idProd", idProd);
 				request.setAttribute("desProd", desProd);
 				request.setAttribute("qtdProd", qtdProd);
 				request.setAttribute("subtotal", subtotal);
-				request.setAttribute("totalVenda", total);
-				request.setAttribute("lucro", lucro);
+				request.setAttribute("totalVendaAtualizado", total);
+				
 
 				/* total = (Double) session.getAttribute("totalVenda"); */
 
@@ -479,8 +523,7 @@ public class vendasServer extends HttpServlet {
 				newItem.put("qtdProd", qtdProd);
 				newItem.put("precoProd", precoProd);
 				newItem.put("subtotal", String.valueOf(subtotal));
-				newItem.put("totalVenda", String.valueOf(total));
-				newItem.put("compraProd", String.valueOf(lucro));
+				newItem.put("totalVendaAtualizado", String.valueOf(total));
 
 				JSONArray itens = (JSONArray) session.getAttribute("itens");
 
@@ -492,8 +535,8 @@ public class vendasServer extends HttpServlet {
 
 				// Atualizar a lista de itens na sessão
 				session.setAttribute("itens", itens);
-				session.setAttribute("totalVenda", total);
-				session.setAttribute("lucro", lucro);
+				session.setAttribute("totalVendaAtualizado", total);
+			
 
 				// Escrevendo a nova linha na resposta
 
@@ -526,12 +569,14 @@ public class vendasServer extends HttpServlet {
 		String empresa = (String) session.getAttribute("empresa");
 		
 
-		Produtos prod = new Produtos();
-		ProdutosDAO prodDAO = new ProdutosDAO(empresa);
-		Clientes cli = new Clientes();
-		ClientesDAO cliDAO = new ClientesDAO(empresa);
+		
 
 		try {
+			
+			Produtos prod = new Produtos();
+			ProdutosDAO prodDAO = new ProdutosDAO(empresa);
+			Clientes cli = new Clientes();
+			ClientesDAO cliDAO = new ClientesDAO(empresa);
 
 			cli = cliDAO.consultarClientesPorcpf(cpfCli);
 			request.setAttribute("cliId", cli.getId());

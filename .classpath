@@ -30,5 +30,8 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-6.18.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/gson-2.8.2.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jdt-compiler-3.1.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/slf4j.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/HikariCP-4.0.3.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/logback.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

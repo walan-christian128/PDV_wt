@@ -57,10 +57,12 @@ VendasDAO dao = new VendasDAO(empresa);
 	crossorigin="anonymous">
 
 </head>
-<body class="bg-light">
+<body
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
+     
 	<%@ include file="menu.jsp"%>
-	<main class="container d-flex h-auto d-inline-block">
-		<div class="row col-md-9">
+	<main class="container d-flex h-auto d-inline-block d-flex">
+		<div class="row col-md-9 mt-n3 d-flex">
 			<!-- Formulário de Cliente -->
 			<form id="buscarClienteForm" class="row g-3 needs-validation"
 				novalidate action="selecionarClienteProdutos" method="POST">
@@ -150,8 +152,7 @@ VendasDAO dao = new VendasDAO(empresa);
 							<div class="col-md-6">
 								<label for="qtdProd" class="form-label">QTD: </label> <input
 									type="number" class="form-control " id="qtdProd" name="qtdProd"
-									required
-									value="<%=request.getAttribute("qtdProd") != null ? request.getAttribute("qtdProd").toString() : "0"%>">
+									value="<%=request.getAttribute("qtdProd") != null ? request.getAttribute("qtdProd").toString() : ""%>">
 
 							</div>
 						</div>
@@ -235,26 +236,27 @@ VendasDAO dao = new VendasDAO(empresa);
 
 
 			</div>
+
+
+			<form action= "desconto"class ="d-flex" id="formDescont" method="post">
 			<div class=" col-md-3">
 				<label class="form-label">Total Venda:</label> <input
-					id="totalVenda" type="text" class="form-control" name="totalVenda"
-					value="<%=session.getAttribute("totalVenda") != null ? session.getAttribute("totalVenda").toString() : "0.00"%>">
+					id="totalVenda" type="text" class="form-control" name="totalVendaAtualizado"
+					value="<%=session.getAttribute("totalVendaAtualizado") != null ? session.getAttribute("totalVendaAtualizado").toString() : "0.00"%>">
 
 
 			</div>
+				
 
-
-			<div class="col-md-3">
-    <label class="form-label">Lucro:</label> 
-    <input type="text" id="lucro" class="form-control" name="lucro"
-           value="<%=session.getAttribute("lucro") != null ? session.getAttribute("lucro").toString() : "0.00"%>">
-</div>
-			<div class=" col-md-3">
+				<div class=" col-md-3">
 				<label class="form-label">Desconto:</label> <input type="text"
 					class="form-control" name="desconto"
 					value="<%=request.getAttribute("desconto") != null ? request.getAttribute("desconto").toString() : "0.00"%>"
 					id="desconto">
 			</div>
+				
+			</form>
+			  
 			<div>
 				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
 					data-bs-target="#confirmacaoModal">Pagamento</button>
@@ -291,8 +293,8 @@ VendasDAO dao = new VendasDAO(empresa);
 								<div class=" col-md-3">
 									<label class="form-label">Valor: </label> <input type="text"
 										class="form-control ml-1" id="pegardoTotal"
-										value="<%=session.getAttribute("totalVenda")%>"
-										name="totalVenda">
+										value="<%=session.getAttribute("totalVendaAtualizado")%>"
+										name="totalVendaAtualizado">
 
 								</div>
 								<div class="col-md-3" id="dinheiroRecebidoDiv">
@@ -332,12 +334,11 @@ VendasDAO dao = new VendasDAO(empresa);
 			</div>
 			<input type="hidden" name="cliId"
 				value="<%=request.getAttribute("cliId")%>"> <input
-				type="hidden" name="data" value="<%=datamysql%>"> <input
-				type="hidden" name="lucro"
-				value="<%=session.getAttribute("lucro")%>"> <input
+				type="hidden" name="data" value="<%=datamysql%>">  <input
 				type="hidden" class="form-control" name="desconto"
 				value="<%=request.getAttribute("desconto") != null ? request.getAttribute("desconto").toString() : "0.00"%>"
 				id="desconto">
+				
 			<%
 			if (itensArray != null) {
 				for (int i = 0; i < itensArray.length(); i++) {
@@ -539,17 +540,8 @@ VendasDAO dao = new VendasDAO(empresa);
 			document.getElementById("lucro").value = lucroValue.toFixed(2); // Exibir o lucro com duas casas decimais
 		}
 
-		// Função para calcular o total da venda e o lucro
-		function updateTotal(subtotalValue, lucroCalculo) {
-			totalValue += subtotalValue; // Adicionar o subtotal ao total
-			lucroValue += lucroCalculo; // Adicionar o lucro ao total de lucro
-			totalValue += pegarTotal;
-
-			document.getElementById("total").value = totalValue.toFixed(2);
-			document.getElementById("lucro").value = lucroValue.toFixed(2); // Exibir o lucro com duas casas decimais
-			document.getElementById("pegardoTotal").value = totalValue
-					.toFixed(2);
-		}
+		
+		
 		// Função para mostrar ou ocultar os campos com base na opção selecionada
 		function mostrarCampos() {
 			var select = document.getElementById("formaPagamento");
@@ -737,14 +729,7 @@ document.getElementById("carrinho").addEventListener("click", function(event) {
     };
 </script>
 
-<script>
-    $(document).ready(function(){
-        var showModal = '<%= request.getParameter("showModal") %>';
-        if (showModal === "true") {
-            $('#comprovanteVenda').modal('show');
-        }
-    });
-</script>
+>
 
   
     <script>
@@ -819,8 +804,34 @@ document.getElementById("carrinho").addEventListener("click", function(event) {
 	
 	</script>
 
+	<script>
+	(() => {
+	    'use strict';
+	    const forms = document.querySelectorAll('.needs-validation');
+	    Array.from(forms).forEach(form => {
+	        form.addEventListener('submit', event => {
+	            const qtdProd = form.querySelector('#qtdProd'); // Campo a ignorar
+	            if (qtdProd) {
+	                qtdProd.setCustomValidity(''); // Limpa qualquer estado inválido
+	            }
 
+	            if (!form.checkValidity()) {
+	                event.preventDefault();
+	                event.stopPropagation();
+	            }
+	            form.classList.add('was-validated');
+	        }, false);
+	    });
+	})();
 
+ 
+ </script>
+  <script>
+    // JavaScript para desconto
+        document.getElementById('descontoBtn').addEventListener('click', function () {
+        document.getElementById('formDescont').submit();
+    });
+</script>
 
 
 </body>

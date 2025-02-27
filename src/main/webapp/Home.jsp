@@ -59,7 +59,9 @@ request.setAttribute("totalVendido", totalVendasDia);
 <!-- Link para o Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Q/jnqA9/ctw53zwTwj9tdG1x8czgkF+4hJbUBt1ZZbPr42N2zrgfmjjM+KAX1nbj" crossorigin="anonymous">
 </head>
-<body>
+<body
+	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
+    <%@ include file="index.html"%>
 	<%@ include file="menu.jsp"%>
 	<div class="container mt-4">
 		<div class="row">

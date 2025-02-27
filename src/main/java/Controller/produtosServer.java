@@ -2,6 +2,8 @@ package Controller;
 
 import java.io.IOException;
 
+import javax.naming.NamingException;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -49,6 +51,9 @@ public class produtosServer extends HttpServlet {
 			} catch (ClassNotFoundException | ServletException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		} else if (action.equals("/delete")) {
 			ApagarProdutos(request, response);
@@ -59,7 +64,7 @@ public class produtosServer extends HttpServlet {
 	}
 
 	private void listandoProduto(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException {
+			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
 		Produtos prod = new Produtos();
