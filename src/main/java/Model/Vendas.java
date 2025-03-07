@@ -10,8 +10,21 @@ public class Vendas {
     private String obs;
     private double desconto;
     private String formaPagamento;
+    private Usuario usuario;
     
-    public String getformaPagamento() {
+    public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public String getformaPagamento() {
         return formaPagamento;
     }
 

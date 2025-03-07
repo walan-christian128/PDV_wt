@@ -42,6 +42,7 @@ public class produtosServer extends HttpServlet {
 		System.out.println(action);
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
+		
 
 		if (action.equals("/insert")) {
 			CadastrandoProdutos(request, response);

@@ -3,6 +3,7 @@ package DAO;
 import Model.Clientes;
 import Model.ItensVenda;
 import Model.Produtos;
+import Model.Usuario;
 import Conexao.ConectionDataBases;
 import Conexao.ConectionFactory;
 
@@ -42,21 +43,24 @@ public class VendasDAO {
 		try {
 		
 
-			String sql = "insert into tb_vendas(cliente_id,data_venda,total_venda,observacoes,desconto,forma_pagamento)values(?,?,?,?,?,?)";
+			String sql = "insert into tb_vendas(cliente_id,data_venda,total_venda,observacoes,desconto,forma_pagamento,idUsuario)values(?,?,?,?,?,?,?)";
 			PreparedStatement stmt = con.prepareStatement(sql);
 
-			if (obj.getCliente() != null) {
+			if (obj.getCliente() !=null ) {
 				// Define o cliente_id normalmente
 				stmt.setInt(1, obj.getCliente().getId());
+				
 			} else {
 				// Define NULL para cliente_id se não houver cliente
 				stmt.setNull(1, java.sql.Types.INTEGER);
+				
 			}
 			stmt.setString(2, obj.getData_venda());
 			stmt.setDouble(3, obj.getTotal_venda());
 			stmt.setString(4, obj.getObs());
 			stmt.setDouble(5, obj.getDesconto());
 			stmt.setString(6, obj.getformaPagamento());
+			stmt.setInt(7, obj.getUsuario().getId());
 
 			stmt.execute();
 
@@ -384,8 +388,12 @@ public class VendasDAO {
 		return totalLucro;
 		
 	}
+	
+
+
+	  
+}
 
 	
 
 
-}

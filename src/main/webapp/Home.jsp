@@ -48,6 +48,15 @@ totalVendasDia = dao.retornaTotalVendaPorDia(data_venda);
 // Definir o total de vendas como atributo da requisição
 request.setAttribute("totalVendido", totalVendasDia);
 %>
+<%
+Integer usuarioID = (Integer) session.getAttribute("usuarioID");
+
+if (usuarioID != null) {
+    out.println("ID do Usuário: " + usuarioID);
+} else {
+    out.println("Usuário não logado.");
+}
+%>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -57,6 +66,9 @@ request.setAttribute("totalVendido", totalVendasDia);
 <link rel="icon"
 	href="img/2992664_cart_dollar_mobile_shopping_smartphone_icon.png">
 <!-- Link para o Bootstrap 5 -->
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Q/jnqA9/ctw53zwTwj9tdG1x8czgkF+4hJbUBt1ZZbPr42N2zrgfmjjM+KAX1nbj" crossorigin="anonymous">
 </head>
 <body

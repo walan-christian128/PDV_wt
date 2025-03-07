@@ -44,6 +44,16 @@ String vendaIDParam = request.getParameter("vendaID");
 VendasDAO dao = new VendasDAO(empresa);
 
 %>
+<%
+Integer usuarioID = (Integer) session.getAttribute("usuarioID");
+
+if (usuarioID != null) {
+    out.println("ID do Usuário: " + usuarioID);
+} else {
+    out.println("Usuário não logado.");
+}
+%>
+
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -338,6 +348,8 @@ VendasDAO dao = new VendasDAO(empresa);
 				type="hidden" class="form-control" name="desconto"
 				value="<%=request.getAttribute("desconto") != null ? request.getAttribute("desconto").toString() : "0.00"%>"
 				id="desconto">
+				<input type="hidden" name="idUsuario" value="<%= usuarioID %>">
+				
 				
 			<%
 			if (itensArray != null) {

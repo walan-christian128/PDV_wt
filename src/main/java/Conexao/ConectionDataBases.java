@@ -16,9 +16,13 @@ public class ConectionDataBases {
 
     // Método para obter a conexão com o banco de dados
     public Connection getConectionDataBases() throws SQLException {
-        // Crie a URL de conexão utilizando o nome do banco de dados
-        String url = "jdbc:mysql://localhost:3306/" + this.databaseName;
-        // Retorne a conexão com o banco de dados
-        return DriverManager.getConnection(url, "walan", "359483wa@"); // Substitua "username" e "password" conforme necessário
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Força o carregamento do driver
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Driver JDBC do MySQL não encontrado", e);
+        }
+        
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/distribuidora", "walan", "359483wa@");
     }
+
 }

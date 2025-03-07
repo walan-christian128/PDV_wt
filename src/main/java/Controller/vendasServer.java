@@ -47,6 +47,7 @@ import DAO.itensVendaDAO;
 import Model.Clientes;
 import Model.ItensVenda;
 import Model.Produtos;
+import Model.Usuario;
 import Model.Vendas;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -375,14 +376,22 @@ public class vendasServer extends HttpServlet {
 		String totalVenda = request.getParameter("totalVendaAtualizado");
 		String Obs = request.getParameter("observacao");
 		String desconto = request.getParameter("desconto");
+		
 		String formaPagamento = request.getParameter("formaPagamento");
+		String idUsuario = request.getParameter("usuarioID");
+		  
+		
+		Usuario  usuario = new Usuario();
+		
+		session.setAttribute("usuarioID", usuario.getId());   
+ 
+		Vendas obj = new Vendas();  
 
-		Vendas obj = new Vendas();
 
+		
 		try {
-
 			
-
+			
 			
 			if (idCli != null && !idCli.isEmpty() && !idCli.equals("0")) {
 				// Se houver ID do cliente, atribui ao objeto
@@ -401,6 +410,13 @@ public class vendasServer extends HttpServlet {
 			obj.setObs(Obs);
 			obj.setDesconto(Double.parseDouble(desconto));
 			obj.setFormaPagamento(formaPagamento);
+			
+			if(idUsuario != null && !idUsuario.isEmpty() && !idUsuario.equals("0")) {
+				Usuario userobj = new Usuario();
+				userobj.getId();
+				obj.setUsuario(userobj);
+					
+			}
 
 			VendasDAO dao = new VendasDAO(empresa);
 			dao.cadastrarVenda(obj); // Aqui deve funcionar normalmente mesmo sem cliente
@@ -466,6 +482,7 @@ public class vendasServer extends HttpServlet {
 		System.out.println("Observação: " + Obs);
 		System.out.println("Desconto: " + desconto);
 		System.out.println("Forma de Pagamento: " + formaPagamento);
+		System.out.println("usuarioLogado : " + usuario.getId() );
 
 		HttpSession newSession = request.getSession(true);
 		newSession.removeAttribute("totalVenda");
