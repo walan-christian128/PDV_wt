@@ -25,9 +25,7 @@ public class fornecedorServer extends HttpServlet {
 
 	
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
+	
 	public fornecedorServer() {
 		super();
 		// TODO Auto-generated constructor stub

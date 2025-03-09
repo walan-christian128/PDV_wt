@@ -28,6 +28,7 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/slf4j.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/HikariCP-4.0.3.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/logback.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/mysql-connector-j-9.2.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jakarta-servlet-api-4.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jakarta.servlet-api_4.0.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

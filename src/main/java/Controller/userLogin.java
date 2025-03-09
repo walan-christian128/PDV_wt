@@ -74,6 +74,7 @@ public class userLogin extends HttpServlet {
 	        // Criar o DAO para o usuário com base na empresa
 	        UsuarioDAO dao = new UsuarioDAO(empresa);
 
+	        
 	        // Criar um objeto Usuario e buscar o ID no banco
 	        Usuario usuarioObj = new Usuario();
 	        usuarioObj.setEmail(email);
@@ -95,6 +96,7 @@ public class userLogin extends HttpServlet {
 	        e.printStackTrace();
 	        request.setAttribute("erro", "Ocorreu um erro ao processar a solicitação.");
 	        RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
+	        
 	        rd.forward(request, response);
 	    }
 	}
