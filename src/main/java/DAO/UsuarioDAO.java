@@ -189,31 +189,21 @@ public class UsuarioDAO {
 	    return usuarioSenha;
 	}
 	public int cidugoUsuario(Usuario usuario, String empresa) throws SQLException, ClassNotFoundException {
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresa, "walan", "359483wa@");
+	    Class.forName("com.mysql.cj.jdbc.Driver");
+	    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresa, "walan", "359483wa@");
 
-		// Inicialize a conexão com o banco de dados
-		this.con = connectionFactory.getConectionDataBases(); // Certifique-se de que ConnectionFactory está correto
-
-		// Seleciona a base de dados correta
-		String useDatabase = "USE " + empresa;
-		Statement stmtUse = con.createStatement(); // Aqui pode ocorrer o erro
-		stmtUse.execute(useDatabase);
-
-		
-	    String sql = "SELECT id FROM tb_usuario WHERE email = ? AND senha = ?";
+	    String sql = "SELECT id FROM tb_usuario WHERE email = ?";
 	    
 	    try {
 	        PreparedStatement stmt = con.prepareStatement(sql);
 	        stmt.setString(1, usuario.getEmail());
-	        stmt.setString(2, usuario.getSenha());
 	        ResultSet rs = stmt.executeQuery();
 	        
 	        if (rs.next()) {
-	            return rs.getInt("id"); 
+	            return rs.getInt("id");
 	        }
 	    } catch (Exception e) {
-	        e.printStackTrace(); // Importante para ver erros no console
+	        e.printStackTrace();
 	    }
 	    
 	    return 0; // Retorna 0 se o usuário não for encontrado

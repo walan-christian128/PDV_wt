@@ -27,6 +27,7 @@ public class produtosServer extends HttpServlet {
 	 */
 	public produtosServer() {
 		super();
+		
 		// TODO Auto-generated constructor stub
 	}
 

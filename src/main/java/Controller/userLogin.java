@@ -53,12 +53,10 @@ public class userLogin extends HttpServlet {
 	@SuppressWarnings("unused")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException {
-	    // Obtendo os parâmetros da requisição
 	    String email = request.getParameter("email");
 	    String senha = request.getParameter("senha");
 	    String empresa = request.getParameter("empresa");
 
-	    // Verificar se os parâmetros foram fornecidos
 	    if (email == null || email.isEmpty() || senha == null || senha.isEmpty() || empresa == null || empresa.isEmpty()) {
 	        request.setAttribute("erro", "Todos os campos devem ser preenchidos.");
 	        RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
@@ -66,29 +64,34 @@ public class userLogin extends HttpServlet {
 	        return;
 	    }
 
-	    // Criar ou obter a sessão
 	    HttpSession session = request.getSession();
 	    session.setAttribute("empresa", empresa);
 
 	    try {
-	        // Criar o DAO para o usuário com base na empresa
 	        UsuarioDAO dao = new UsuarioDAO(empresa);
 
-	        
-	        // Criar um objeto Usuario e buscar o ID no banco
+	        // 🔹 Primeiro verifica se o login é válido
+	        boolean loginValido = dao.efetuarLogin(email, senha, empresa);
+	        if (!loginValido) {
+	            request.setAttribute("erro", "Usuário, senha ou empresa incorretos.");
+	            RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
+	            rd.forward(request, response);
+	            return;
+	        }
+
+	        // 🔹 Depois busca o ID do usuário
 	        Usuario usuarioObj = new Usuario();
 	        usuarioObj.setEmail(email);
-	        
 	        usuarioObj.setSenha(senha);
-	        
-	        int usuarioID = dao.cidugoUsuario(usuarioObj,empresa); // Busca o ID do usuário
 
-	        if (usuarioID > 0) { // Se encontrou o usuário no banco
+	        int usuarioID = dao.cidugoUsuario(usuarioObj, empresa);
+
+	        if (usuarioID > 0) {
 	            session.setAttribute("usuarioID", usuarioID);
 	            System.out.println("Usuário logado: " + usuarioID);
-	            response.sendRedirect("Home.jsp"); // Redireciona após login bem-sucedido
+	            response.sendRedirect("Home.jsp");
 	        } else {
-	            request.setAttribute("erro", "Usuário, senha ou empresa incorretos.");
+	            request.setAttribute("erro", "Erro ao buscar ID do usuário.");
 	            RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
 	            rd.forward(request, response);
 	        }
@@ -96,7 +99,6 @@ public class userLogin extends HttpServlet {
 	        e.printStackTrace();
 	        request.setAttribute("erro", "Ocorreu um erro ao processar a solicitação.");
 	        RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
-	        
 	        rd.forward(request, response);
 	    }
 	}
