@@ -42,6 +42,7 @@ import com.google.gson.Gson;
 import DAO.ClientesDAO;
 import DAO.ProdutosDAO;
 import DAO.RelNotaVenda;
+import DAO.UsuarioDAO;
 import DAO.VendasDAO;
 import DAO.itensVendaDAO;
 import Model.Clientes;
@@ -366,215 +367,201 @@ public class vendasServer extends HttpServlet {
 	}
 
 	private void inserirVendas(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	        throws ServletException, IOException {
 
-		HttpSession session = request.getSession();
-		String empresa = (String) session.getAttribute("empresa");
+	    HttpSession session = request.getSession();
+	    String empresa = (String) session.getAttribute("empresa");
 
-		String idCli = request.getParameter("cliId");
-		String dataVenda = request.getParameter("data");
-		String totalVenda = request.getParameter("totalVendaAtualizado");
-		String Obs = request.getParameter("observacao");
-		String desconto = request.getParameter("desconto");
-		
-		String formaPagamento = request.getParameter("formaPagamento");
-		String idUsuario = request.getParameter("usuarioID");
-		  
-		
-		Usuario  usuario = new Usuario();
-		
-		session.setAttribute("usuarioID", usuario.getId());   
- 
-		Vendas obj = new Vendas();  
+	    String idCli = request.getParameter("cliId");
+	    String dataVenda = request.getParameter("data");
+	    String totalVenda = request.getParameter("iserirtotal");
+	    String Obs = request.getParameter("observacao");
+	    String desconto = request.getParameter("desconto");
+	    String formaPagamento = request.getParameter("formaPagamento");
 
+	    // Pegando o ID do usuário logado da sessão
+	    Integer usuarioID = (Integer) session.getAttribute("usuarioID");
 
-		
-		try {
-			
-			
-			
-			if (idCli != null && !idCli.isEmpty() && !idCli.equals("0")) {
-				// Se houver ID do cliente, atribui ao objeto
-				Clientes objCli = new Clientes();
-				int cliId = Integer.parseInt(idCli);
-				objCli.setId(cliId);
-				obj.setCliente(objCli);
-			} else {
-				// Caso não haja ID do cliente, o objeto cliente será nulo
-				obj.setCliente(null); // Deixe claro que não há cliente
-			}
+	    Vendas obj = new Vendas();
 
-			// Definindo os outros campos da venda
-			obj.setData_venda(dataVenda);
-			obj.setTotal_venda(Double.parseDouble(totalVenda));
-			obj.setObs(Obs);
-			obj.setDesconto(Double.parseDouble(desconto));
-			obj.setFormaPagamento(formaPagamento);
-			
-			if(idUsuario != null && !idUsuario.isEmpty() && !idUsuario.equals("0")) {
-				Usuario userobj = new Usuario();
-				userobj.getId();
-				obj.setUsuario(userobj);
-					
-			}
+	    try {
+	        if (idCli != null && !idCli.isEmpty() && !idCli.equals("0")) {
+	            Clientes objCli = new Clientes();
+	            objCli.setId(Integer.parseInt(idCli));
+	            obj.setCliente(objCli);
+	        } else {
+	            obj.setCliente(null);
+	        }
 
-			VendasDAO dao = new VendasDAO(empresa);
-			dao.cadastrarVenda(obj); // Aqui deve funcionar normalmente mesmo sem cliente
+	        // Definindo os outros campos da venda
+	        obj.setData_venda(dataVenda);
+	        obj.setTotal_venda(Double.parseDouble(totalVenda));
+	        obj.setObs(Obs);
+	        obj.setDesconto(Double.parseDouble(desconto));
+	        obj.setFormaPagamento(formaPagamento);
 
-			// Capturando o ID da venda recém-criada
-			obj.setId(dao.retornaUltimaVenda());
+	        // Definir o usuário logado na venda
+	        if (usuarioID != null && usuarioID > 0) {
+	            Usuario objUser = new Usuario();
+	            objUser.setId(usuarioID);
+	            obj.setUsuario(objUser);
+	        }
 
-			// Processando os itens da venda (mantido igual)
-			JSONArray itensArray = (JSONArray) session.getAttribute("itens");
-			if (itensArray != null) {
-				for (int i = 0; i < itensArray.length(); i++) {
-					JSONObject linha = itensArray.getJSONObject(i);
+	        // Inserir venda no banco
+	        VendasDAO dao = new VendasDAO(empresa);
+	        dao.cadastrarVenda(obj);
 
-					total = 0.0;
-					
+	        // Capturar o ID da venda recém-criada
+	        obj.setId(dao.retornaUltimaVenda());
 
-					String idProdVenda = linha.getString("idProd");
-					String qtdProd = linha.getString("qtdProd");
-					String subItens = linha.getString("subtotal");
+	        // Processar os itens da venda
+	        JSONArray itensArray = (JSONArray) session.getAttribute("itens");
+	        if (itensArray != null) {
+	            for (int i = 0; i < itensArray.length(); i++) {
+	                JSONObject linha = itensArray.getJSONObject(i);
 
-					ProdutosDAO dao_produto = new ProdutosDAO(empresa);
-					itensVendaDAO daoitem = new itensVendaDAO(empresa);
-					Produtos objp = new Produtos();
-					ItensVenda itens = new ItensVenda();
+	                String idProdVenda = linha.getString("idProd");
+	                String qtdProd = linha.getString("qtdProd");
+	                String subItens = linha.getString("subtotal");
 
-					itens.setVenda(obj); // Relaciona o item à venda
-					objp.setId(Integer.parseInt(idProdVenda));
-					itens.setProduto(objp);
-					itens.setQtd(Integer.parseInt(qtdProd));
-					itens.setSubtotal(Double.parseDouble(subItens));
+	                ProdutosDAO dao_produto = new ProdutosDAO(empresa);
+	                itensVendaDAO daoitem = new itensVendaDAO(empresa);
+	                Produtos objp = new Produtos();
+	                ItensVenda itens = new ItensVenda();
 
-					int qtd_estoque, qtd_comprada, qtd_atualizada;
-					// Baixa no estoque
-					qtd_estoque = dao_produto.retornaEstoqueAtual(objp.getId());
-					qtd_comprada = Integer.parseInt(qtdProd);
-					qtd_atualizada = qtd_estoque - qtd_comprada;
+	                itens.setVenda(obj);
+	                objp.setId(Integer.parseInt(idProdVenda));
+	                itens.setProduto(objp);
+	                itens.setQtd(Integer.parseInt(qtdProd));
+	                itens.setSubtotal(Double.parseDouble(subItens));
 
-					dao_produto.baixarEstoque(objp.getId(), qtd_atualizada);
+	                // Baixa no estoque
+	                int qtd_estoque = dao_produto.retornaEstoqueAtual(objp.getId());
+	                int qtd_comprada = Integer.parseInt(qtdProd);
+	                int qtd_atualizada = qtd_estoque - qtd_comprada;
 
-					// Cadastrar o item de venda
-					daoitem.cadastraItem(itens);
-				}
+	                dao_produto.baixarEstoque(objp.getId(), qtd_atualizada);
 
-				total = 0.0;
-			
-				session.removeAttribute("totalVendaAtualizado");
-				session.removeAttribute("itens");
-				session.removeAttribute("desconto");
-				session.removeAttribute("idProd");
-				session.removeAttribute("desProd");
+	                // Cadastrar o item de venda
+	                daoitem.cadastraItem(itens);
+	            }
 
-				response.sendRedirect("realizarVendas.jsp");
-				
-			}
+	            // Limpar sessão após a venda
+	            session.removeAttribute("totalVendaAtualizado");
+	            
+	            session.removeAttribute("itens");
+	            session.removeAttribute("desconto");
+	            session.removeAttribute("totalVenda");
+	            
+	            // Adicione logs extras antes e depois de remover o atributo
+	            System.out.println("Antes de remover: " + session.getAttribute("totalVendaAtualizado"));
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	
-		System.out.println("Cliente ID: " + idCli);
-		System.out.println("Data Venda: " + dataVenda);
-		System.out.println("Total Venda: " + totalVenda);
-		System.out.println("Observação: " + Obs);
-		System.out.println("Desconto: " + desconto);
-		System.out.println("Forma de Pagamento: " + formaPagamento);
-		System.out.println("usuarioLogado : " + usuario.getId() );
+	            session.removeAttribute("totalVendaAtualizado");
 
-		HttpSession newSession = request.getSession(true);
-		newSession.removeAttribute("totalVenda");
+	            System.out.println("Depois de remover: " + session.getAttribute("totalVendaAtualizado"));
+	           
+
+	            
+	          
+	           
+
+	           
+
+	            response.sendRedirect("realizarVendas.jsp");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    // Debug
+	    System.out.println("Cliente ID: " + idCli);
+	    System.out.println("Data Venda: " + dataVenda);
+	    System.out.println("Total Venda: " + totalVenda);
+	    System.out.println("Observação: " + Obs);
+	    System.out.println("Desconto: " + desconto);
+	    System.out.println("Forma de Pagamento: " + formaPagamento);
+	    System.out.println("Usuário Logado ID: " + usuarioID);
 	}
 
 	private void inserirItens(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession();
+	        throws ServletException, IOException {
+	    HttpSession session = request.getSession();
 
-		try {
-			// Lendo os dados enviados pela requisição AJAX
-			BufferedReader reader = request.getReader();
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			JSONObject itemJson = new JSONObject(sb.toString());
+	    try {
+	        // Lendo os dados enviados pela requisição AJAX
+	        BufferedReader reader = request.getReader();
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        JSONObject itemJson = new JSONObject(sb.toString());
 
-			String idProd = itemJson.getString("idProd");
-			String desProd = itemJson.getString("desProd");
-			String qtdProd = itemJson.getString("qtdProd");
-			String precoProd = itemJson.getString("precoProd");
-			String precoMeu = itemJson.getString("compraProd");
+	        String idProd = itemJson.getString("idProd");
+	        String desProd = itemJson.getString("desProd");
+	        String qtdProd = itemJson.getString("qtdProd");
+	        String precoProd = itemJson.getString("precoProd");
+	        String precoMeu = itemJson.getString("compraProd");
 
-			// Verificando se a quantidade não é nula
-			if (qtdProd != null) {
-				int qtdPrdo = Integer.parseInt(qtdProd);
-				preco = Double.parseDouble(precoProd);
-				meuPreco = Double.parseDouble(precoMeu);
+	        // Verificando se a quantidade não é nula
+	        if (qtdProd != null) {
+	            int qtdPrdo = Integer.parseInt(qtdProd);
+	            double preco = Double.parseDouble(precoProd);
+	            double meuPreco = Double.parseDouble(precoMeu);
 
-				// Calculando o subtotal
-				subtotal = qtdPrdo * preco;
-				total += subtotal;
+	            // Calculando o subtotal
+	            double subtotal = qtdPrdo * preco;
 
-				request.setAttribute("idProd", idProd);
-				request.setAttribute("desProd", desProd);
-				request.setAttribute("qtdProd", qtdProd);
-				request.setAttribute("subtotal", subtotal);
-				request.setAttribute("totalVendaAtualizado", total);
-				
+	            // Obtendo o total atual da sessão ou inicializando com 0
+	            double total = 0.0;
+	            if (session.getAttribute("totalVendaAtualizado") != null) {
+	                total = (double) session.getAttribute("totalVendaAtualizado");
+	            }
 
-				/* total = (Double) session.getAttribute("totalVenda"); */
+	            // Atualizando o total
+	            total += subtotal;
 
-				// Calculando o lucro para este item
+	            // Construindo a nova linha da tabela HTML
+	            String newRow = "<tr>" + "<td>" + idProd + "</td>" + "<td>" + desProd + "</td>" + "<td>" + qtdProd
+	                    + "</td>" + "<td>" + precoProd + "</td>" + "<td>" + subtotal + "</td>" + "</tr>";
 
-				// Construindo a nova linha da tabela HTML
-				String newRow = "<tr>" + "<td>" + idProd + "</td>" + "<td>" + desProd + "</td>" + "<td>" + qtdProd
-						+ "</td>" + "<td>" + precoProd + "</td>" + "<td>" + subtotal + "</td>" + "</tr>";
+	            JSONObject newItem = new JSONObject();
 
-				JSONObject newItem = new JSONObject();
+	            newItem.put("idProd", idProd);
+	            newItem.put("desProd", desProd);
+	            newItem.put("qtdProd", qtdProd);
+	            newItem.put("precoProd", precoProd);
+	            newItem.put("subtotal", String.valueOf(subtotal));
+	            newItem.put("totalVendaAtualizado", String.valueOf(total));
 
-				newItem.put("idProd", idProd);
-				newItem.put("desProd", desProd);
-				newItem.put("qtdProd", qtdProd);
-				newItem.put("precoProd", precoProd);
-				newItem.put("subtotal", String.valueOf(subtotal));
-				newItem.put("totalVendaAtualizado", String.valueOf(total));
+	            JSONArray itens = (JSONArray) session.getAttribute("itens");
 
-				JSONArray itens = (JSONArray) session.getAttribute("itens");
+	            if (itens == null) {
+	                itens = new JSONArray();
+	            }
 
-				if (itens == null) {
-					itens = new JSONArray();
-				}
+	            itens.put(newItem);
 
-				itens.put(newItem);
+	            // Atualizar a lista de itens e o total na sessão
+	            session.setAttribute("itens", itens);
+	            session.setAttribute("totalVendaAtualizado", total);
 
-				// Atualizar a lista de itens na sessão
-				session.setAttribute("itens", itens);
-				session.setAttribute("totalVendaAtualizado", total);
-			
+	            // Escrevendo a nova linha na resposta
+	            PrintWriter out = response.getWriter();
+	            out.println(newRow);
 
-				// Escrevendo a nova linha na resposta
+	            // Removendo atributos desnecessários da sessão
+	            session.removeAttribute("idProd");
+	            session.removeAttribute("desProd");
+	            session.removeAttribute("qtdProd");
+	            session.removeAttribute("precoProd");
+	            session.removeAttribute("compraProd");
+	        }
 
-				PrintWriter out = response.getWriter();
-				out.println(newRow);
-				
-				session.removeAttribute("idProd");
-				session.removeAttribute("desProd");
-				session.removeAttribute("qtdProd");
-				session.removeAttribute("precoProd");
-				session.removeAttribute("compraProd");
-			
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		      
-
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	private void selecionarClienteProd(HttpServletRequest request, HttpServletResponse response)

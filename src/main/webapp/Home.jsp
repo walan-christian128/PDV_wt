@@ -48,15 +48,8 @@ totalVendasDia = dao.retornaTotalVendaPorDia(data_venda);
 // Definir o total de vendas como atributo da requisição
 request.setAttribute("totalVendido", totalVendasDia);
 %>
-<%
-Integer usuarioID = (Integer) session.getAttribute("usuarioID");
 
-if (usuarioID != null) {
-    out.println("ID do Usuário: " + usuarioID);
-} else {
-    out.println("Usuário não logado.");
-}
-%>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -73,8 +66,21 @@ if (usuarioID != null) {
 </head>
 <body
 	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
-    <%@ include file="index.html"%>
+   
 	<%@ include file="menu.jsp"%>
+	<div class="col-md-6">
+	<input type="text" class="form-control bg-dark text-white"
+		name="Usuarionome"
+		value="<%Model.Usuario usuario = (Model.Usuario) session.getAttribute("usuarioNome");
+if (usuario != null) {
+	String nomeUsuario = usuario.getNome();
+	out.println("Usuario : " + nomeUsuario);
+} else {
+	out.println("Usuário não encontrado na sessão.");
+}%>"
+		aria-label="Sizing example input"
+		aria-describedby="inputGroup-sizing-sm">
+		</div>
 	<div class="container mt-4">
 		<div class="row">
 			<div class="col-md-6">
@@ -118,6 +124,7 @@ if (usuarioID != null) {
 						%>
 					</tbody>
 				</table>
+				
 				<div class="mb-3 p-3">
 					<label class="form-label">Total Diário Vendido: </label> <input
 						type="text" class="form-control bg-dark text-white"
@@ -168,5 +175,7 @@ if (usuarioID != null) {
 	<!-- Link para o Bootstrap 5 JS -->
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybP6mFfFFjwB9wdKzRzj6pU1nFJWcXyYn3xU8gD0VYqzZp7O9K" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-cuOtV/3TIq0zEgmMdx4KhD2a6CZIBIc4OS1FtOSY//z5fPiDF1OC5Y+dIRejkKe0" crossorigin="anonymous"></script>
+	
 </body>
+
 </html>

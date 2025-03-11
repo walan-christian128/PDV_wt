@@ -85,9 +85,11 @@ public class userLogin extends HttpServlet {
 	        usuarioObj.setSenha(senha);
 
 	        int usuarioID = dao.cidugoUsuario(usuarioObj, empresa);
+	        Usuario nomeUser = dao.retornUser(usuarioObj, empresa, usuarioID);
 
 	        if (usuarioID > 0) {
 	            session.setAttribute("usuarioID", usuarioID);
+	            session.setAttribute("usuarioNome", nomeUser);
 	            System.out.println("Usuário logado: " + usuarioID);
 	            response.sendRedirect("Home.jsp");
 	        } else {

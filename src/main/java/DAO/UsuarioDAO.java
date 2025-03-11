@@ -209,5 +209,28 @@ public class UsuarioDAO {
 	    return 0; // Retorna 0 se o usuário não for encontrado
 	}
 
+	
+	public Usuario retornUser(Usuario usuario, String empresa,int idUser) throws SQLException, ClassNotFoundException {
+	    Class.forName("com.mysql.cj.jdbc.Driver");
+	    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresa, "walan", "359483wa@");
+
+	    String sql = "SELECT nome FROM tb_usuario WHERE email = ?";
+	    
+	    try {
+	        PreparedStatement stmt = con.prepareStatement(sql);
+	        stmt.setString(1, usuario.getEmail());
+	        ResultSet rs = stmt.executeQuery();
+	        
+	        if (rs.next()) {
+	           usuario.setNome(rs.getString("nome"));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		return usuario;
+	    
+	   
+	}
+
 
 }

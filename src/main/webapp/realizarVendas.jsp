@@ -44,15 +44,7 @@ String vendaIDParam = request.getParameter("vendaID");
 VendasDAO dao = new VendasDAO(empresa);
 
 %>
-<%
-Integer usuarioID = (Integer) session.getAttribute("usuarioID");
 
-if (usuarioID != null) {
-    out.println("ID do Usuário: " + usuarioID);
-} else {
-    out.println("Usuário não logado.");
-}
-%>
 
 <html lang="pt-BR">
 <head>
@@ -304,7 +296,7 @@ if (usuarioID != null) {
 									<label class="form-label">Valor: </label> <input type="text"
 										class="form-control ml-1" id="pegardoTotal"
 										value="<%=session.getAttribute("totalVendaAtualizado")%>"
-										name="totalVendaAtualizado">
+										name="iserirtotal">
 
 								</div>
 								<div class="col-md-3" id="dinheiroRecebidoDiv">
@@ -348,7 +340,7 @@ if (usuarioID != null) {
 				type="hidden" class="form-control" name="desconto"
 				value="<%=request.getAttribute("desconto") != null ? request.getAttribute("desconto").toString() : "0.00"%>"
 				id="desconto">
-				<input type="hidden" name="idUsuario" value="<%= usuarioID %>">
+				<input type="hidden" name="usuarioID">
 				
 				
 			<%
