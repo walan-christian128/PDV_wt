@@ -49,8 +49,24 @@ if (tokenRecebido == null || !TokenServiceDAO.validarToken(tokenRecebido)) {
          <div class="mb-3">
             <label for="preco_compra" class="form-label">Empresa:</label>
             <input type="text" class="form-control" id="base" name="base"
-                    required placeholder="DIGITAR NOME SEM ESPAÃ‡OS E SEM CARACTERES ESPECIAIS">
+                    required placeholder="DIGITAR NOME SEM ESPAÇOS E SEM CARACTERES ESPECIAIS">
         </div>
+        
+         <div class="mb-3">
+            <label for="cnpj" class="form-label">CNPJ:</label>
+            <input type="text" class="form-control" id="cnpj" name="cnpj"
+                    >
+        </div>
+         <div class="mb-3">
+            <label for="preco_compra" class="form-label">Endereço:</label>
+            <input type="text" class="form-control" id="endereco" name="endereco"
+                    >
+        </div>
+        <div class="mb-3">
+    <label for="logo" class="form-label">Imagem:</label>
+    <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+</div>
+        
        
        
     
@@ -64,5 +80,17 @@ if (tokenRecebido == null || !TokenServiceDAO.validarToken(tokenRecebido)) {
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+     
+      $('#cnpj').mask('00.000.000/0000-00');
+      });
+</script>
+	<script
+				src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+			<script
+				src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
+				<script>
 </body>
 </html>

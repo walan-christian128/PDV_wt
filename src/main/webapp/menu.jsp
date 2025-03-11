@@ -7,7 +7,7 @@
 <%
 
 Vendas vendasDia = new Vendas();
-String totalVenda = request.getAttribute("totalVenda") != null ? request.getAttribute("totalVenda").toString() : "";
+String totalVenda = request.getAttribute("totalVenda2") != null ? request.getAttribute("totalVenda2").toString() : "";
 String data = request.getAttribute("data") != null ? request.getAttribute("data").toString() : "";
 %>
 <%
@@ -285,7 +285,7 @@ if (empresa4 == null || empresa4.isEmpty()) {
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="dia" method="post">
+					<form  id = "dia"action="dia" method="post">
 						<div class="mb-3">
 							<label for="data" class="form-label">Data:</label> <input
 								type="text" id="data" class="form-control" name="data" required
