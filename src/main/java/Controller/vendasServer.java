@@ -10,8 +10,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,6 +27,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,10 +37,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.naming.NamingException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +51,7 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
+import Conexao.ConectionFactory;
 import DAO.ClientesDAO;
 import DAO.ProdutosDAO;
 import DAO.RelNotaVenda;
@@ -46,6 +59,7 @@ import DAO.UsuarioDAO;
 import DAO.VendasDAO;
 import DAO.itensVendaDAO;
 import Model.Clientes;
+import Model.Empresa;
 import Model.ItensVenda;
 import Model.Produtos;
 import Model.Usuario;
@@ -118,7 +132,12 @@ public class vendasServer extends HttpServlet {
 			maisVendidos(request, response);
 			break;
 		case "/exibirRelatorio":
-			gerarRelatorio(request, response);
+			try {
+				gerarRelatorio(request, response);
+			} catch (ClassNotFoundException | ServletException | IOException | NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		case "/lucroVenda":
 			lucroVenda(request, response);
@@ -238,42 +257,108 @@ public class vendasServer extends HttpServlet {
 		
 	}
 	
-	@SuppressWarnings("unused")
-	protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    HttpSession session = request.getSession();
-	    String empresa = (String) session.getAttribute("empresa");
+	@SuppressWarnings({ "unused"})
+	protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, ClassNotFoundException, NamingException {
 
-	    // Verificar se o nome da empresa está disponível na sessão
-	    if (empresa == null) {
-	        response.getWriter().write("Empresa não fornecida.");
-	        LOGGER.log(Level.WARNING, "Empresa não fornecida.");
-	        return;
-	    }
+        HttpSession session = request.getSession();
+        String empresa = (String) session.getAttribute("empresa");
 
-	    try {
-	        // Instancia a classe responsável pela geração do relatório
-	        RelNotaVenda relatorio = new RelNotaVenda(empresa);
-	        
-	        // Gera o relatório
-	        JasperPrint jasperPrint = relatorio.gerarRelatorio("RelatoriosJasper/pdvRelComprovanteVenda.jrxml");
-	        LOGGER.log(Level.INFO, "Relatório gerado com sucesso para a empresa: " + empresa);
+        if (empresa == null) {
+            response.getWriter().write("Empresa não fornecida.");
+            LOGGER.log(Level.WARNING, "Empresa não fornecida.");
+            return;
+        }
 
-	        // Define o tipo de resposta como PDF
-	        response.setContentType("application/pdf");
-	        response.setHeader("Content-Disposition", "inline; filename=relatorio_venda.pdf");
+        try (Connection connection = new ConectionFactory().getConnection(empresa)) {
+            InputStream reportStream = getClass().getClassLoader().getResourceAsStream("RelatorioJasper/pdvRelComprovanteVenda.jrxml");
 
-	        // Exporta o relatório para o fluxo de saída HTTP
-	        try (OutputStream outStream = response.getOutputStream()) {
-	            JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
-	            outStream.flush();
-	            request.setAttribute("rel", outStream);  
-	        }
+            if (reportStream == null) {
+                response.getWriter().write("Arquivo de relatório não encontrado.");
+                LOGGER.log(Level.SEVERE, "Arquivo de relatório não encontrado.");
+                return;
+            }
 
-	    } catch (JRException | SQLException | ClassNotFoundException e) {
-	        LOGGER.log(Level.SEVERE, "Erro ao gerar relatório para a empresa: " + empresa, e);
-	        response.getWriter().write("Erro ao gerar relatório: " + e.getMessage());
-	    }
-	}
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+
+            Map<String, Object> parametros = new HashMap<>();
+            UsuarioDAO dao = new UsuarioDAO(empresa);
+
+            Empresa empresaObj = dao.retornCompany(new Empresa(), empresa, 0);
+            int cdEmpresa = empresaObj != null ? empresaObj.getId() : 0;
+            parametros.put("cdEmpresa", cdEmpresa);
+
+            String sql = "SELECT MAX(tb_vendas.id) AS codigo, "
+                    + "       tb_clientes.nome AS Nome, "
+                    + "       tb_clientes.celular AS Celular, "
+                    + "       DATE_FORMAT(NOW(), '%d/%m/%Y') AS data, "
+                    + "       tb_clientes.endereco AS Endereco, "
+                    + "       tb_clientes.numero AS Numero, "
+                    + "       tb_clientes.bairro AS Bairro, "
+                    + "       tb_clientes.cidade AS Cidade, "
+                    + "       tb_itensvendas.subtotal AS SubTotal, "
+                    + "       tb_produtos.descricao AS Descricao, "
+                    + "       tb_vendas.total_venda AS Total_Da_Venda, "
+                    + "       tb_itensvendas.qtd as quantidade, "
+                    + "       tb_empresa.endereco as empresa, "
+                    + "       tb_empresa.nome AS NomeEmpresa, "
+                    + "       tb_empresa.logo as logo"
+                    + "  FROM tb_produtos "
+                    + " INNER JOIN tb_itensvendas ON tb_produtos.id = tb_itensvendas.produto_id "
+                    + " INNER JOIN tb_vendas ON tb_itensvendas.venda_id = tb_vendas.id "
+                    + " LEFT JOIN tb_clientes ON tb_vendas.cliente_id = tb_clientes.id "
+                    + " INNER JOIN tb_usuario on tb_vendas.idUsuario = tb_usuario.id "
+                    + " INNER JOIN tb_empresa ON tb_empresa.id = tb_usuario.empresaID "
+                    + " WHERE tb_vendas.id in (select max(tb_vendas.id) from tb_vendas) "
+                    + " AND tb_empresa.id = ? "
+                    + " GROUP BY tb_clientes.nome, "
+                    + "         tb_clientes.celular, "
+                    + "         tb_clientes.endereco, "
+                    + "         tb_clientes.numero, "
+                    + "         tb_clientes.bairro, "
+                    + "         tb_clientes.cidade, "
+                    + "         tb_itensvendas.subtotal, "
+                    + "         tb_produtos.descricao, "
+                    + "         tb_vendas.total_venda, "
+                    + "         tb_itensvendas.qtd, "
+                    + "         tb_empresa.endereco";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);) {
+                System.out.println("cdEmpresa: " + cdEmpresa);
+                stmt.setInt(1, cdEmpresa);
+
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    System.out.println("Nenhum dado retornado da consulta principal!");
+                    response.getWriter().write("Nenhum dado encontrado para gerar o relatório.");
+                    return;
+                } else {
+                    rs.previous();
+                    JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
+                    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, jrRS);
+
+                    response.setContentType("application/pdf");
+                    response.setHeader("Content-Disposition", "inline; filename=relatorio_venda.pdf");
+
+                    try (OutputStream outStream = response.getOutputStream()) {
+                        JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
+                        outStream.flush();
+                    }
+                }
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Erro ao executar consulta SQL", e);
+                response.getWriter().write("Erro ao executar consulta SQL: " + e.getMessage());
+            } catch (JRException e) {
+                LOGGER.log(Level.SEVERE, "Erro ao gerar o relatório Jasper", e);
+                response.getWriter().write("Erro ao gerar o relatório: " + e.getMessage());
+            }
+
+        } catch (SQLException | JRException | NamingException | IOException e) {
+            LOGGER.log(Level.SEVERE, "Erro ao gerar relatório para a empresa: " + empresa, e);
+            response.getWriter().write("Erro ao gerar relatório: " + e.getMessage());
+        }
+    }
+
 
 	private void maisVendidos(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

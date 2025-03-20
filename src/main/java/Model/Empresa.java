@@ -44,4 +44,14 @@ public class Empresa {
 
 	private String cnpj;
 	private String endereco;
+	private byte[]logo;
+
+	public byte[] getLogo() {
+		return logo;
+	}
+
+	public void setLogo(byte[] logo) {
+		this.logo = logo;
+	}
+	
 }

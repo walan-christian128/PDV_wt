@@ -173,7 +173,7 @@ public class fornecedorServer extends HttpServlet {
 		try {
 			String idFornec = request.getParameter("id");
 			if (idFornec != null && !idFornec.trim().isEmpty()) {
-				obj.setId(Integer.parseInt(request.getParameter(idFornec)));
+				obj.setId(Integer.parseInt(idFornec));
 			}
 			String nomeFornec = request.getParameter("nome");
 			if (nomeFornec != null && !nomeFornec.trim().isEmpty()) {

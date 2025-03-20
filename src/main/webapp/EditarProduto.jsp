@@ -80,7 +80,31 @@ lista = dao.listaFornecedores();
 </select>
 
         </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
+       <button type="button" class="btn btn-primary"
+						data-bs-toggle="modal" data-bs-target="#EditarProduto">
+						Salvar</button>
+</div>
+				<div class="modal fade" tabindex="-1" id="EditarProduto">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Editar Produto</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<p>Deseja Realmente Editar Este Produto?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Não</button>
+								<button type="submit" class="btn btn-primary">Sim</button>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+        
     </form>
 </div>
 

@@ -10,6 +10,7 @@ import java.sql.Statement;
 import javax.naming.NamingException;
 
 import Conexao.ConectionDataBases;
+import Model.Empresa;
 import Model.PasswordUtil;
 import Model.Usuario;
 
@@ -231,6 +232,32 @@ public class UsuarioDAO {
 	    
 	   
 	}
+	 public Empresa retornCompany(Empresa emp, String empresaNome, int codigo) throws SQLException, ClassNotFoundException {
+	        Class.forName("com.mysql.cj.jdbc.Driver");
+	        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresaNome, "walan", "359483wa@");
 
+	        String sql = "SELECT id FROM tb_empresa LIMIT 1";
+
+	        try (PreparedStatement stmt = con.prepareStatement(sql);
+	             ResultSet rs = stmt.executeQuery()) {
+
+	            if (rs.next()) {
+	                Empresa empresaRetornada = new Empresa();
+	                empresaRetornada.setId(rs.getInt("id"));
+	                return empresaRetornada;
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (con != null) {
+	                try {
+	                    con.close();
+	                } catch (SQLException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	        return null;
+	    }
 
 }

@@ -24,7 +24,7 @@ if (tokenRecebido == null || !TokenServiceDAO.validarToken(tokenRecebido)) {
 
 <div class="container mt-4">
     <h1 class=""> Cadastro de Usuario/Empresa</h1>
-    <form name="editar" action="CadastroUserEmpresa" method="get" class="container mb-3">
+    <form name="editar" action="CadastroUserEmpresa" method="post" class="container mb-3" enctype="multipart/form-data">
       
         <div class="mb-3">
             <label for="id" class="form-label">Nome:</label>
@@ -52,14 +52,20 @@ if (tokenRecebido == null || !TokenServiceDAO.validarToken(tokenRecebido)) {
                     required placeholder="DIGITAR NOME SEM ESPAÇOS E SEM CARACTERES ESPECIAIS">
         </div>
         
+        <div class="mb-3">
+            <label for="preco_compra" class="form-label">Nome fantasia:</label>
+            <input type="text" class="form-control" id="nomeEmpresa" name="nomeEmpresa"
+                    required placeholder="DIGITAR NOME DA EMPRESA">
+        </div>
+        
          <div class="mb-3">
             <label for="cnpj" class="form-label">CNPJ:</label>
-            <input type="text" class="form-control" id="cnpj" name="cnpj"
+            <input type="text" class="form-control" id="empresaCnpj" name="empresaCnpj"
                     >
         </div>
          <div class="mb-3">
             <label for="preco_compra" class="form-label">Endereço:</label>
-            <input type="text" class="form-control" id="endereco" name="endereco"
+            <input type="text" class="form-control" id="empresaEdereco" name="empresaEdereco"
                     >
         </div>
         <div class="mb-3">
@@ -84,13 +90,14 @@ if (tokenRecebido == null || !TokenServiceDAO.validarToken(tokenRecebido)) {
 <script type="text/javascript">
     $(document).ready(function(){
      
-      $('#cnpj').mask('00.000.000/0000-00');
+      $('#empresaCnpj').mask('00.000.000/0000-00');
+      $('#telefone').mask('(00) - 0000-0000');
       });
 </script>
 	<script
 				src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
 			<script
 				src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
-				<script>
+		
 </body>
 </html>

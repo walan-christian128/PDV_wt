@@ -187,13 +187,13 @@ public class clienteServer extends HttpServlet {
 		try {
 			String idCli = request.getParameter("id");
 			if (idCli != null && !idCli.trim().isEmpty()) {
-				obj.setId(Integer.parseInt(request.getParameter(idCli)));
+			    obj.setId(Integer.parseInt(idCli)); 
 			}
 			String nomeCli = request.getParameter("nome");
 			if (nomeCli != null && !nomeCli.trim().isEmpty()) {
 				obj.setNome(nomeCli);
 			}
-			String cpfCli= request.getParameter("cnpj");
+			String cpfCli= request.getParameter("cpf");
 			if (cpfCli != null && !cpfCli.trim().isEmpty()) {
 				obj.setCpf(cpfCli);
 			}

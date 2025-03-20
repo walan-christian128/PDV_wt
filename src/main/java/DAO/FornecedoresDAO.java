@@ -111,7 +111,7 @@ public class FornecedoresDAO {
 			stmt.setInt(13, obj.getId());
 
 			// Execução//
-			stmt.execute();
+			stmt.executeUpdate();
 			stmt.close();
 
 		

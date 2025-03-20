@@ -7,20 +7,27 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 
 import jakarta.mail.Session;
@@ -32,12 +39,18 @@ import DAO.dataBsesDAO;
 import DAO.UsuarioDAO;
 import DAO.VendasDAO;
 import DAO.itensVendaDAO;
+import Model.Empresa;
 import Model.ItensVenda;
 import Model.Usuario;
 import Model.Vendas;
 
 @WebServlet(urlPatterns = { "/selecionarVenda", "/totalVendas", "/CadastroUserEmpresa", "/RecuperaSenhaServlet",
 		"/AtualizaçãoSenha" })
+@MultipartConfig(
+		fileSizeThreshold = 1024 * 1024 * 2, // 2MB - Tamanho do arquivo na memória antes de gravar no disco
+	    maxFileSize = 1024 * 1024 * 5, // 5MB - Tamanho máximo do arquivo permitido
+	    maxRequestSize = 1024 * 1024 * 10 // 10MB - Tamanho máximo da requisição (arquivo + outros dados)
+		)
 public class inicialServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection con;
@@ -215,55 +228,94 @@ public class inicialServer extends HttpServlet {
 	}
 
 	@SuppressWarnings("static-access")
-	private void createBase(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String empresa = request.getParameter("base");
+	 protected void createBase(HttpServletRequest request, HttpServletResponse response)
+	            throws ServletException, IOException {
 
-		if (empresa != null && !empresa.trim().isEmpty()) {
-			try {
-				// Criação da instância de createData que irá criar o banco e as tabelas
-				createData data = new createData(empresa);
+	        String empresa = request.getParameter("base");
 
-				// Coletar dados do usuário
-				String nomeUsuario = request.getParameter("nome");
-				String usuarioTelefone = request.getParameter("telefone");
-				String usuarioEmail = request.getParameter("email");
-				String usuarioSenha = request.getParameter("senha");
+	        if (empresa != null && !empresa.trim().isEmpty()) {
+	            try {
+	                // Criar banco e tabelas
+	                createData data = new createData(empresa);
 
-				if (nomeUsuario != null && !nomeUsuario.trim().isEmpty()) {
-					// Inserir o usuário na base de dados
-					Usuario uso = new Usuario();
-					uso.setNome(nomeUsuario);
-					uso.setTelefone(usuarioTelefone);
-					uso.setEmail(usuarioEmail);
-					uso.setSenha(usuarioSenha);
+	                // Coletar dados do usuário
+	                String nomeUsuario = request.getParameter("nome");
+	                String usuarioTelefone = request.getParameter("telefone");
+	                String usuarioEmail = request.getParameter("email");
+	                String usuarioSenha = request.getParameter("senha");
+	                String empresaNome = request.getParameter("nomeEmpresa");
+	                String empresaCnpj = request.getParameter("empresaCnpj");
+	                String empresaEndereco = request.getParameter("empresaEdereco");
 
-					// Método `inserirUsuarioEmpresa` já está definido para trabalhar com a conexão
-					// do banco
-					data.inserirUsuarioEmpresa(uso);
-				}
+	                byte[] logoBytes = null;
+	                Image logoImage = null;
 
-				// Redireciona para a página de login
-				RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
-				rd.forward(request, response);
+	                // Verifica se há uma imagem na requisição
+	                if (request.getContentType() != null && request.getContentType().toLowerCase().startsWith("multipart/")) {
+	                    Part filePart = request.getPart("logo");
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				// Enviar uma mensagem de erro para o usuário ou redirecionar para uma página de
-				// erro
-				request.setAttribute("errorMessage",
-						"Ocorreu um erro ao criar o banco de dados e/ou inserir o usuário.");
-				RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
-				rd.forward(request, response);
-			}
-		} else {
-			// Tratamento para quando o nome da base está vazio ou nulo
-			request.setAttribute("errorMessage", "O nome da base de dados não pode ser vazio.");
-			RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
-			rd.forward(request, response);
-		}
-	}
+	                    if (filePart != null && filePart.getSize() > 0) {
+	                        InputStream inputStream = filePart.getInputStream();
+	                        logoBytes = inputStream.readAllBytes(); // Converte para byte[]
+	                        logoImage = converterImagem(logoBytes); // Converte para java.awt.Image
+	                    }
+	                }
 
+	                if (nomeUsuario != null && !nomeUsuario.trim().isEmpty()) {
+	                    // Criar objetos Empresa e Usuário
+	                    Usuario uso = new Usuario();
+	                    Empresa emp = new Empresa();
+
+	                    uso.setNome(nomeUsuario);
+	                    uso.setTelefone(usuarioTelefone);
+	                    uso.setEmail(usuarioEmail);
+	                    uso.setSenha(usuarioSenha);
+
+	                    if (empresaNome != null && !empresaNome.trim().isEmpty()) {
+	                        emp.setNome(empresaNome);
+	                        emp.setCnpj(empresaCnpj);
+	                        emp.setEndereco(empresaEndereco);
+	                        emp.setLogo(logoBytes);
+	                    }
+
+	                    // Inserir empresa e usuário no banco
+	                    data.inserirEmpresaUsuario(emp, uso);
+	                }
+
+	                // Passar imagem para JasperReports se necessário
+	                HashMap<String, Object> parametros = new HashMap<>();
+	                parametros.put("logo", logoImage);
+
+	                // Redireciona para a página de login
+	                RequestDispatcher rd = request.getRequestDispatcher("Login.jsp");
+	                rd.forward(request, response);
+
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                request.setAttribute("errorMessage", "Ocorreu um erro ao criar o banco de dados e/ou inserir o usuário.");
+	                RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+	                rd.forward(request, response);
+	            }
+	        } else {
+	            request.setAttribute("errorMessage", "O nome da base de dados não pode ser vazio.");
+	            RequestDispatcher rd = request.getRequestDispatcher("error.jsp");
+	            rd.forward(request, response);
+	        }
+	    }
+
+	    /**
+	     * Converte um array de bytes em um objeto java.awt.Image
+	     */
+	    private Image converterImagem(byte[] imagemBytes) {
+	        try {
+	            ByteArrayInputStream is = new ByteArrayInputStream(imagemBytes);
+	            return ImageIO.read(is);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);

@@ -17,7 +17,6 @@
 <h1>Editar Clientes</h1>
 <body
 	style="background-image: url('img/Gemini_Generated_Image_97a36f97a36f97a3.jpg'); background-size: auto auto; background-position: center; margin: 0; padding: 0; height: 100vh; width: 100vw;">
- <%@ include file="index.html"%>
 	<%@ include file="menu.jsp"%>
 <div id="form-container"
 	class="form-control form-control-sm m-0 d-flex ">
@@ -34,6 +33,8 @@
 						type="text" id="id" class="form-control" name="id" required
 						value="<%out.print(request.getAttribute("id"));%>" disabled>
 				</div>
+				<input type="hidden" name="id" value="<%out.print(request.getAttribute("id"));%>">
+				
 
 
 				<div class="mb-3">
@@ -63,7 +64,7 @@
 					<label for="telefone" class="form-label">Telefone:</label> <input
 						type="text" id="telefone" name="telefone"
 						class="form-control cel-sp-mask"
-						placeholder="Ex.: (00) 00000-0000"
+						placeholder="Ex.: (00) 0000-0000"
 						value="<%out.print(request.getAttribute("telefone"));%>">
 				</div>
 				<div class="mb-3">

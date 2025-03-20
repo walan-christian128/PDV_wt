@@ -8,10 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,14 +17,20 @@ import Conexao.ConectionFactory;
 
 public class RelNotaVenda {
     private static final Logger LOGGER = Logger.getLogger(RelNotaVenda.class.getName());
-    private Connection con;
+    @SuppressWarnings("unused")
+	private String empresa;
+    private Connection connection;
 
     public RelNotaVenda(String empresa) throws SQLException, ClassNotFoundException {
-        // Inicialize sua conexão aqui
-        this.con = new ConectionFactory().getConnection(empresa);
+        this.empresa = empresa;
+        this.connection = new ConectionFactory().getConnection(empresa);
+    }
+    public RelNotaVenda(String empresa, Connection connection) {
+        this.empresa = empresa;
+        this.connection = connection;
     }
 
-    public JasperPrint gerarRelatorio(String layoutPath) throws JRException, SQLException, ClassNotFoundException, IOException {
+    public JasperPrint gerarRelatorio(String layoutPath, Map<String, Object> parametros) throws JRException, IOException, SQLException {
         // Carrega o design do relatório a partir do ClassLoader
         InputStream inputStream = getClass().getResourceAsStream("/" + layoutPath);
 
@@ -38,24 +41,27 @@ public class RelNotaVenda {
             LOGGER.log(Level.INFO, "Arquivo JRXML encontrado no classpath: " + layoutPath);
         }
 
-        JasperDesign desenho = JRXmlLoader.load(inputStream);
+        try {
+            // Carrega o layout do relatório
+            JasperDesign desenho = JRXmlLoader.load(inputStream);
 
-        // Compila o relatório
-        JasperReport relatorio = JasperCompileManager.compileReport(desenho);
-        LOGGER.log(Level.INFO, "Relatório compilado com sucesso.");
+            // Compila o relatório
+            JasperReport relatorio = JasperCompileManager.compileReport(desenho);
+            LOGGER.log(Level.INFO, "Relatório compilado com sucesso.");
 
-        // Parâmetros do relatório
-        Map<String, Object> parametros = new HashMap<>();
-    
+            // Verifica se a conexão é válida antes de preencher o relatório
+            if (connection == null || connection.isClosed()) {
+                throw new SQLException("Conexão com o banco de dados está fechada ou inválida.");
+            }
 
-        // Preenche o relatório
-        JasperPrint impressao = JasperFillManager.fillReport(relatorio, parametros, con);
-        LOGGER.log(Level.INFO, "Relatório preenchido com sucesso para vendaID: " );
+            // Preenche o relatório com os parâmetros fornecidos
+            JasperPrint impressao = JasperFillManager.fillReport(relatorio, parametros, connection);
+            LOGGER.log(Level.INFO, "Relatório preenchido com sucesso.");
 
-        // Fecha recursos
-        inputStream.close();
-        con.close();
-
-        return impressao;
+            return impressao;
+        } finally {
+            inputStream.close();
+            connection.close(); // Fecha a conexão após o uso
+        }
     }
 }

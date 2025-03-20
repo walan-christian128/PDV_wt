@@ -163,13 +163,13 @@ public class ClientesDAO {
             stmt.setInt(14, obj.getId());
 
             //Execução//
-            stmt.execute();
+            stmt.executeUpdate();
             stmt.close();
 
            
 
         } catch (SQLException erro) {
-           
+        	 erro.printStackTrace();
 
         }
     }

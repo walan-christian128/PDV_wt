@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import DAO.UsuarioDAO;
 import DAO.VendasDAO;
+import Model.Empresa;
 import Model.PasswordUtil;
 import Model.Usuario;
 
@@ -56,6 +57,7 @@ public class userLogin extends HttpServlet {
 	    String email = request.getParameter("email");
 	    String senha = request.getParameter("senha");
 	    String empresa = request.getParameter("empresa");
+	   
 
 	    if (email == null || email.isEmpty() || senha == null || senha.isEmpty() || empresa == null || empresa.isEmpty()) {
 	        request.setAttribute("erro", "Todos os campos devem ser preenchidos.");
@@ -80,6 +82,7 @@ public class userLogin extends HttpServlet {
 	        }
 
 	        // 🔹 Depois busca o ID do usuário
+	        Empresa empresaNome = new Empresa();
 	        Usuario usuarioObj = new Usuario();
 	        usuarioObj.setEmail(email);
 	        usuarioObj.setSenha(senha);

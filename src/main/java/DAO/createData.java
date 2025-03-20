@@ -1,14 +1,19 @@
 package DAO;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import Conexao.ConectionFactory;
+import Model.Empresa;
 import Model.PasswordUtil;
 import Model.Usuario;
 
@@ -90,6 +95,7 @@ public class createData {
                     "endereco varchar(255) DEFAULT NULL," +
                     "numero int DEFAULT NULL," +
                     "complemento varchar(200) DEFAULT NULL," +
+                    "bairro varchar(200) DEFAULT NULL," +
                     "cidade varchar(100) DEFAULT NULL," +
                     "estado varchar(2) DEFAULT NULL," +
                     "PRIMARY KEY (id)" +
@@ -139,8 +145,8 @@ public class createData {
             String createTable_4 = "CREATE TABLE tb_produtos (" +
                     "id int NOT NULL AUTO_INCREMENT," +
                     "descricao varchar(100) DEFAULT NULL," +
-                    "preco_de_venda decimal(10,2) DEFAULT NULL," +
                     "preco_de_compra decimal(10,2) DEFAULT NULL," +
+                    "preco_de_venda decimal(10,2) DEFAULT NULL," +
                     "qtd_estoque int DEFAULT NULL," +
                     "for_id int DEFAULT NULL," +
                     "PRIMARY KEY (id)," +
@@ -155,6 +161,9 @@ public class createData {
                     "data_venda datetime DEFAULT NULL," +
                     "total_venda decimal(10,2) DEFAULT NULL," +
                     "observacoes text," +
+                    "desconto decimal (10,2)DEFAULT NULL,"+
+                    "forma_pagamento varchar(200),"+
+                    "idUsuario int DEFAULT NULL,"+
                     "PRIMARY KEY (id)," +
                     "KEY cliente_id (cliente_id)," +
                     "CONSTRAINT tb_vendas_ibfk_1 FOREIGN KEY (cliente_id) REFERENCES tb_clientes (id)" +
@@ -175,14 +184,27 @@ public class createData {
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
             statement.executeUpdate(createTable_6);
 
-            String createTable_7 = "CREATE TABLE tb_usuario (" +
-                    "ID INT auto_increment PRIMARY KEY," +
-                    "NOME VARCHAR(150)," +
-                    "TELEFONE VARCHAR(150)," +
-                    "EMAIL VARCHAR(150)," +
-                    "SENHA VARCHAR(300)" +
+           
+            
+            String createTable_7 = "CREATE TABLE tb_empresa (" +
+                    "id INT auto_increment PRIMARY KEY," +
+                    "nome VARCHAR(150)," +
+                    "cnpj VARCHAR(20)," +
+                    "endereco VARCHAR(255)," +
+                    "logo LONGBLOB" +
                     ");";
             statement.executeUpdate(createTable_7);
+            
+            String createTable_8 = "CREATE TABLE tb_usuario (" +
+                    "ID INT auto_increment PRIMARY KEY, " +
+                    "NOME VARCHAR(150), " +
+                    "TELEFONE VARCHAR(150), " +
+                    "EMAIL VARCHAR(150), " +
+                    "SENHA VARCHAR(300), " +
+                    "empresaID INT DEFAULT NULL, " +
+                    "CONSTRAINT fk_usuario_empresa FOREIGN KEY (empresaID) REFERENCES tb_empresa(id) ON DELETE CASCADE ON UPDATE CASCADE)";
+
+            statement.executeUpdate(createTable_8);
 
             System.out.println("Tabelas criadas com sucesso!");
         } finally {
@@ -191,28 +213,71 @@ public class createData {
     }
 
     @SuppressWarnings("static-access")
-	public void inserirUsuarioEmpresa(Usuario uso) throws SQLException {
+    public void inserirEmpresaUsuario(Empresa emp, Usuario uso) throws SQLException {
         if (this.con == null) {
             System.err.println("Erro: Conexão com o banco de dados não foi estabelecida.");
             return;
         }
 
-        String sql = "INSERT INTO tb_usuario (NOME, TELEFONE, EMAIL, SENHA) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = con.prepareStatement(sql)) {
-        	PasswordUtil pass = new PasswordUtil();
-        	
-            stmt.setString(1, uso.getNome());
-            stmt.setString(2, uso.getTelefone());
-            stmt.setString(3, uso.getEmail());
-            stmt.setString(4, pass.hashPassword(uso.getSenha()));
+        // Inicia a transação
+        con.setAutoCommit(false);
 
-            stmt.execute();
-            System.out.println("Usuário inserido com sucesso!");
+        String sqlEmpresa = "INSERT INTO tb_empresa (nome, cnpj, endereco, logo) VALUES (?, ?, ?, ?)";
+        String sqlUsuario = "INSERT INTO tb_usuario (NOME, TELEFONE, EMAIL, SENHA, empresaID) VALUES (?, ?, ?, ?, ?)";
+
+        try (
+            PreparedStatement stmtEmpresa = con.prepareStatement(sqlEmpresa, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmtUsuario = con.prepareStatement(sqlUsuario)
+        ) {
+            PasswordUtil pass = new PasswordUtil();
+
+            // Inserindo a empresa
+            stmtEmpresa.setString(1, emp.getNome());
+            stmtEmpresa.setString(2, emp.getCnpj());
+            stmtEmpresa.setString(3, emp.getEndereco());
+            
+            if (emp.getLogo() != null) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(emp.getLogo());
+                stmtEmpresa.setBinaryStream(4, bais, emp.getLogo().length);
+            } else {
+                stmtEmpresa.setNull(4, Types.BLOB);
+            }
+
+            
+
+            stmtEmpresa.executeUpdate();
+
+            // Obtendo o ID gerado da empresa
+            ResultSet rs = stmtEmpresa.getGeneratedKeys();
+            int empresaId = 0;
+            if (rs.next()) {
+                empresaId = rs.getInt(1);
+            }
+            rs.close();
+
+            // Inserindo o usuário associado à empresa
+            stmtUsuario.setString(1, uso.getNome());
+            stmtUsuario.setString(2, uso.getTelefone());
+            stmtUsuario.setString(3, uso.getEmail());
+            stmtUsuario.setString(4, pass.hashPassword(uso.getSenha()));
+            stmtUsuario.setInt(5, empresaId); // Relacionando o usuário à empresa criada
+
+            stmtUsuario.executeUpdate();
+
+            // Commit da transação
+            con.commit();
+            System.out.println("Empresa e usuário inseridos com sucesso!");
         } catch (SQLException e) {
-            System.err.println("Erro ao inserir usuário: " + e.getMessage());
+            // Rollback em caso de erro
+            con.rollback();
+            System.err.println("Erro ao inserir empresa e usuário: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            // Retorna o auto-commit ao normal
+            con.setAutoCommit(true);
         }
     }
-    
+
+
     
 }

@@ -33,6 +33,7 @@
 						type="text" id="id" class="form-control" name="id" required
 						value="<%out.print(request.getAttribute("id"));%>" disabled>
 				</div>
+				<input type="hidden"name="id" value="<%out.print(request.getAttribute("id"));%>">
 
 
 				<div class="mb-3">
