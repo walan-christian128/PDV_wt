@@ -7,7 +7,7 @@ public class ItensVenda {
 	    private int qtd;
 	    private double subtotal;
 
-	    
+
 	    //getrs e setrs//
 
 	    public int getId() {

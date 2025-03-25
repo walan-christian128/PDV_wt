@@ -1,5 +1,10 @@
 package Controller;
 
+import java.io.IOException;
+
+import DAO.UsuarioDAO;
+import Model.Empresa;
+import Model.Usuario;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,14 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-
-import DAO.UsuarioDAO;
-import DAO.VendasDAO;
-import Model.Empresa;
-import Model.PasswordUtil;
-import Model.Usuario;
 
 /**
  * Servlet implementation class userLogin
@@ -32,12 +29,13 @@ public class userLogin extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -51,13 +49,14 @@ public class userLogin extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	@SuppressWarnings("unused")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException {
 	    String email = request.getParameter("email");
 	    String senha = request.getParameter("senha");
 	    String empresa = request.getParameter("empresa");
-	   
+
 
 	    if (email == null || email.isEmpty() || senha == null || senha.isEmpty() || empresa == null || empresa.isEmpty()) {
 	        request.setAttribute("erro", "Todos os campos devem ser preenchidos.");

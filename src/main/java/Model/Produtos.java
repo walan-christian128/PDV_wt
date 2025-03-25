@@ -8,7 +8,7 @@ public class Produtos {
 	    private double preco_de_compra;
 
 
-	  
+
 
 		public int getId() {
 	        return id;
@@ -40,8 +40,8 @@ public class Produtos {
 
 	    public void setFornecedor(Fornecedores fornecedor) {
 	        this.fornecedor = fornecedor;
-	        
-	       
+
+
 	    }
 
 	    public double getPreco_de_compra() {

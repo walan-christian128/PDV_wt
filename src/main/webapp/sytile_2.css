@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Titillium+Web');
 
-:root{
-	
+:root {
+
 	--clr-pink: #3EF76f;
 	--clr-green: #06d6a0;
 	--clr-green_hover: #0cc493;
-	--clr-green_active: #0daf84; 	
+	--clr-green_active: #0daf84;
 }
 
 
@@ -15,9 +15,12 @@
 
 .table-containerdetalhes {
 	position: relative;
-	top: 300px; /* Altere este valor conforme necessário */
-	right: 30%; /* Move o elemento para a metade da largura do contêiner pai */
-    transform: translateX(-50%); /* Move o elemento de volta metade da sua própria largura, centrando-o horizontalmente */
+	top: 300px;
+	/* Altere este valor conforme necessário */
+	right: 30%;
+	/* Move o elemento para a metade da largura do contêiner pai */
+	transform: translateX(-50%);
+	/* Move o elemento de volta metade da sua própria largura, centrando-o horizontalmente */
 	overflow-y: auto;
 }
 
@@ -28,10 +31,12 @@ table-detalhe {
 	width: 100%;
 	margin-bottom: .5em;
 	display: inline-block;
-	top: 200px; /* Altere este valor conforme necessário */
+	top: 200px;
+	/* Altere este valor conforme necessário */
 }
 
-th, td {
+th,
+td {
 	padding: .7em;
 	text-align: center;
 }

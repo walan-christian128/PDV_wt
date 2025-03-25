@@ -1,5 +1,11 @@
 package Controller;
 
+import java.io.IOException;
+
+import javax.naming.NamingException;
+
+import DAO.ClientesDAO;
+import Model.Clientes;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,13 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-
-import javax.naming.NamingException;
-
-import DAO.ClientesDAO;
-import Model.Clientes;
-
 /**
  * Servlet implementation class fornecedorServer
  */
@@ -22,7 +21,7 @@ import Model.Clientes;
 public class clienteServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	
+
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -36,12 +35,13 @@ public class clienteServer extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
-        String empresa = (String) session.getAttribute("empresa"); 
-		
+        String empresa = (String) session.getAttribute("empresa");
+
 
 		String action = request.getServletPath();
 		System.out.println(action);
@@ -113,29 +113,29 @@ public class clienteServer extends HttpServlet {
 		    }
 
 	}
-	
-	
+
+
 
 	private void apagarFornecedor(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
-        String empresa = (String) session.getAttribute("empresa"); 
+        String empresa = (String) session.getAttribute("empresa");
 		Clientes obj = new Clientes();
 		ClientesDAO dao = new ClientesDAO(empresa);
-		
+
 		String id = request.getParameter("id");
 		if(id != null) {
 			obj.setId(Integer.parseInt(id));
 			dao.excluirCliente(obj);
 			response.sendRedirect("Clientes.jsp");
-			
+
 		}
-		
+
 	}
 
 	private void modalSelect(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
-        String empresa = (String) session.getAttribute("empresa"); 
+        String empresa = (String) session.getAttribute("empresa");
 		Clientes obj = new Clientes();
 		ClientesDAO dao = new ClientesDAO(empresa);
 	  String idFornecedor = request.getParameter("id");
@@ -156,7 +156,7 @@ public class clienteServer extends HttpServlet {
 			request.setAttribute("cidade", obj.getCidade());
 			request.setAttribute("complemento", obj.getComplemento());
 			request.setAttribute("estado", obj.getUf());
-		
+
 			RequestDispatcher rd = request.getRequestDispatcher("EditarClientes.jsp");
 			rd.forward(request, response);
 
@@ -169,11 +169,12 @@ public class clienteServer extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-			
-		
+
+
+
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
@@ -181,13 +182,13 @@ public class clienteServer extends HttpServlet {
 	private void atualizarClientes(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
-        String empresa = (String) session.getAttribute("empresa"); 
+        String empresa = (String) session.getAttribute("empresa");
 		Clientes obj = new Clientes();
 		ClientesDAO dao = new ClientesDAO(empresa);
 		try {
 			String idCli = request.getParameter("id");
 			if (idCli != null && !idCli.trim().isEmpty()) {
-			    obj.setId(Integer.parseInt(idCli)); 
+			    obj.setId(Integer.parseInt(idCli));
 			}
 			String nomeCli = request.getParameter("nome");
 			if (nomeCli != null && !nomeCli.trim().isEmpty()) {
@@ -250,7 +251,7 @@ public class clienteServer extends HttpServlet {
 	private void CadastrarClientes(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, ClassNotFoundException, NamingException {
 		HttpSession session = request.getSession();
-        String empresa = (String) session.getAttribute("empresa"); 
+        String empresa = (String) session.getAttribute("empresa");
 		Clientes obj = new Clientes();
 		ClientesDAO dao = new ClientesDAO(empresa);
 		String cliNome = request.getParameter("nome");

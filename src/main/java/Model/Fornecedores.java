@@ -15,11 +15,11 @@ public class Fornecedores extends Clientes {
 	public Fornecedores(String cnpj) {
 		super();
 		this.cnpj = cnpj;
-		
+
 	}
 	private String cnpj;
 	 private boolean modoEdicao;
-    
+
     //atributos//
  public String getCnpj() {
      return cnpj;
@@ -32,7 +32,7 @@ public class Fornecedores extends Clientes {
  @Override
  public String toString(){
   return this.getNome();
- 
+
  }
  public boolean isModoEdicao() {
      return modoEdicao;
@@ -41,5 +41,5 @@ public class Fornecedores extends Clientes {
      this.modoEdicao = modoEdicao;
  }
 
- 
+
 }

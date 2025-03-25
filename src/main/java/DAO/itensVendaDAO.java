@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Conexao.ConectionDataBases;
-import Conexao.ConectionFactory;
 import Model.ItensVenda;
 import Model.Produtos;
 
@@ -38,14 +37,14 @@ public class itensVendaDAO {
             stmt.setInt(2, obj.getProduto().getId());
             stmt.setInt(3, obj.getQtd());
             stmt.setDouble(4, obj.getSubtotal());
-          
+
 
             stmt.execute();
 
             stmt.close();
 
         } catch (Exception erro) {
-           
+
         }
 
     }
@@ -68,16 +67,16 @@ public class itensVendaDAO {
             while (rs.next()) {
             	ItensVenda item = new ItensVenda();
                 Produtos prod =  new Produtos();
-                
+
                 item.setId(rs.getInt("i.id"));
                 prod.setDescricao(rs.getString("p.descricao"));
                 item.setQtd(rs.getInt("i.qtd"));
                 prod.setPreco_de_venda(rs.getDouble("p.preco_de_venda"));
                 item.setSubtotal(rs.getDouble("i.subtotal"));
-             
-                
+
+
                 item.setProduto(prod);
-                
+
                 lista.add(item);
 
             }
@@ -87,7 +86,7 @@ public class itensVendaDAO {
         } catch (SQLException erro) {
         	System.out.println("erro"+erro);
             return null;
-            
+
 
         }
 

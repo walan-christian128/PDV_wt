@@ -1,16 +1,16 @@
 package DAO;
 
-import Conexao.ConectionFactory;
-import Model.Fornecedores;
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JOptionPane;
+
+import Conexao.ConectionFactory;
+import Model.Fornecedores;
 
 /**
  *
@@ -114,10 +114,10 @@ public class FornecedoresDAO {
 			stmt.executeUpdate();
 			stmt.close();
 
-		
+
 
 		} catch (SQLException erro) {
-			
+
 
 		}
 	}
@@ -133,10 +133,10 @@ public class FornecedoresDAO {
 			stmt.execute();
 			stmt.close();
 
-			
+
 
 		} catch (SQLException erro) {
-			
+
 		}
 
 	}
@@ -177,7 +177,7 @@ public class FornecedoresDAO {
 	}
 	public Fornecedores consultaFornecedores(int id) {
 		try {
-		
+
 
 			// criando sql//
 			String sql = "SELECT * FROM tb_fornecedores where id=?";
@@ -201,19 +201,19 @@ public class FornecedoresDAO {
 				obj.setCidade(rs.getString("cidade"));
 				obj.setUf(rs.getString("estado"));
 
-				
+
 
 			}
-			
+
 		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Erro" + erro);
-			
+
 		}
 		return null;
 	}
 	public Fornecedores modalFornecedores(Fornecedores obj) {
 		try {
-		
+
 
 			// criando sql//
 			String sql = "SELECT * FROM tb_fornecedores where id=?";
@@ -222,7 +222,7 @@ public class FornecedoresDAO {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				
+
 				obj.setId(rs.getInt("id"));
 				obj.setNome(rs.getString("nome"));
 				obj.setCnpj(rs.getString("cnpj"));
@@ -237,13 +237,13 @@ public class FornecedoresDAO {
 				obj.setCidade(rs.getString("cidade"));
 				obj.setUf(rs.getString("estado"));
 
-				
+
 
 			}
-			
+
 		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Erro" + erro);
-			
+
 		}
          return null;
 	}

@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import javax.naming.NamingException;
 
+import DAO.ProdutosDAO;
+import Model.Fornecedores;
+import Model.Produtos;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,9 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import DAO.ProdutosDAO;
-import Model.Fornecedores;
-import Model.Produtos;
 
 /**
  * Servlet implementation class produtosServer
@@ -27,7 +27,7 @@ public class produtosServer extends HttpServlet {
 	 */
 	public produtosServer() {
 		super();
-		
+
 		// TODO Auto-generated constructor stub
 	}
 
@@ -35,6 +35,7 @@ public class produtosServer extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -43,7 +44,7 @@ public class produtosServer extends HttpServlet {
 		System.out.println(action);
 		HttpSession session = request.getSession();
 		String empresa = (String) session.getAttribute("empresa");
-		
+
 
 		if (action.equals("/insert")) {
 			CadastrandoProdutos(request, response);
@@ -90,6 +91,7 @@ public class produtosServer extends HttpServlet {
 		rd.forward(request, response);
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
@@ -145,13 +147,13 @@ public class produtosServer extends HttpServlet {
 		String empresa = (String) session.getAttribute("empresa");
 		String prodDescricao = request.getParameter("descricao");
 		if (prodDescricao != null && !prodDescricao.trim().isEmpty()) {
-			
+
 			try {
 				Produtos prod = new Produtos();
 				ProdutosDAO dao = new ProdutosDAO(empresa);
 				prod.setDescricao(prodDescricao);
-				prod.setPreco_de_compra(Double.parseDouble(request.getParameter("preco_de_compra")));
-				prod.setPreco_de_venda(Double.parseDouble(request.getParameter("preco_de_venda")));
+				prod.setPreco_de_compra(Double.parseDouble(request.getParameter("preco_de_compra").replace(",", ".")));
+				prod.setPreco_de_venda(Double.parseDouble(request.getParameter("preco_de_venda").replace(",",".")));
 				prod.setQtd_estoque(Integer.parseInt(request.getParameter("qtd_estoque")));
 				Fornecedores fornecedores = new Fornecedores();
 				fornecedores.setId(Integer.parseInt(request.getParameter("for_id")));

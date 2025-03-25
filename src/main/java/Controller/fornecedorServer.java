@@ -1,5 +1,12 @@
 package Controller;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.naming.NamingException;
+
+import DAO.FornecedoresDAO;
+import Model.Fornecedores;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,14 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
-import javax.naming.NamingException;
-
-import DAO.FornecedoresDAO;
-import Model.Fornecedores;
-
 /**
  * Servlet implementation class fornecedorServer
  */
@@ -23,9 +22,9 @@ import Model.Fornecedores;
 public class fornecedorServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	
 
-	
+
+
 	public fornecedorServer() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -35,6 +34,7 @@ public class fornecedorServer extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -107,14 +107,14 @@ public class fornecedorServer extends HttpServlet {
 		Fornecedores obj = new Fornecedores();
 		FornecedoresDAO dao = new FornecedoresDAO(empresa);
 		String id = request.getParameter("id");
-		
+
 		if(id != null) {
 			obj.setId(Integer.parseInt(id));
 			dao.excluirFornecedores(obj);
 			response.sendRedirect("Fornecedores.jsp");
-			
+
 		}
-		
+
 	}
 
 	private void modalSelect(HttpServletRequest request, HttpServletResponse response)
@@ -141,7 +141,7 @@ public class fornecedorServer extends HttpServlet {
 			request.setAttribute("cidade", obj.getCidade());
 			request.setAttribute("complemento", obj.getComplemento());
 			request.setAttribute("estado", obj.getUf());
-		
+
 			RequestDispatcher rd = request.getRequestDispatcher("EditarFornecedor.jsp");
 			rd.forward(request, response);
 
@@ -154,11 +154,12 @@ public class fornecedorServer extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-			
-		
+
+
+
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}

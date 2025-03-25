@@ -1,27 +1,22 @@
 package DAO;
 
-import Model.Clientes;
-import Model.ItensVenda;
-import Model.Produtos;
-import Model.Usuario;
-import Conexao.ConectionDataBases;
-import Conexao.ConectionFactory;
-
-import Model.Vendas;
-import jakarta.servlet.http.HttpSession;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.naming.NamingException;
+
+import Conexao.ConectionDataBases;
+import Model.Clientes;
+import Model.ItensVenda;
+import Model.Produtos;
+import Model.Vendas;
 
 public class VendasDAO {
 
@@ -41,7 +36,7 @@ public class VendasDAO {
 
 	public void cadastrarVenda(Vendas obj) {
 		try {
-		
+
 
 			String sql = "insert into tb_vendas(cliente_id,data_venda,total_venda,observacoes,desconto,forma_pagamento,idUsuario)values(?,?,?,?,?,?,?)";
 			PreparedStatement stmt = con.prepareStatement(sql);
@@ -49,11 +44,11 @@ public class VendasDAO {
 			if (obj.getCliente() !=null ) {
 				// Define o cliente_id normalmente
 				stmt.setInt(1, obj.getCliente().getId());
-				
+
 			} else {
 				// Define NULL para cliente_id se não houver cliente
 				stmt.setNull(1, java.sql.Types.INTEGER);
-				
+
 			}
 			stmt.setString(2, obj.getData_venda());
 			stmt.setDouble(3, obj.getTotal_venda());
@@ -220,7 +215,7 @@ public class VendasDAO {
 	        if (rs.next()) {
 	            totalvenda = rs.getDouble("total");
 	        }
-	      
+
 	        return totalvenda;
 
 	    } catch (SQLException e) {
@@ -245,7 +240,7 @@ public class VendasDAO {
 				totalvenda = rs.getDouble("total");
 
 			}
-		
+
 			return totalvenda;
 
 		} catch (SQLException e) {
@@ -276,7 +271,7 @@ public class VendasDAO {
 				cli.setNome(rs.getString("cli.nome"));
 				cli.setCpf(rs.getString("cli.cpf"));
 				cli.setBairro(rs.getString("cli.endereco"));
-				;
+
 				cli.setNumero(rs.getInt("cli.numero"));
 				prod.setId(rs.getInt("prod.id"));
 				prod.setDescricao(rs.getString("prod.descricao"));
@@ -291,7 +286,7 @@ public class VendasDAO {
 	}
 	public List<ItensVenda> maisVendidos(Date dataInicio, Date dataFim){
 		List<ItensVenda> lista = new ArrayList<>();
-		
+
 		try {
 			String sql =" SELECT DISTINCT "
 					+ " SUM(ITENS.QTD)AS QUANTIDADE, "
@@ -302,35 +297,35 @@ public class VendasDAO {
 					+ " WHERE  DATE(VENDAS.DATA_VENDA)  BETWEEN? AND? "
 					+ " GROUP BY PRODUTO.DESCRICAO "
 					+ " ORDER BY QUANTIDADE DESC ";
-			
+
 			PreparedStatement stmt = con.prepareStatement(sql);
 			stmt.setDate(1, new java.sql.Date(dataInicio.getTime()));
 			stmt.setDate(2, new java.sql.Date(dataFim.getTime()));
-			
+
 			ResultSet rs = stmt.executeQuery();
 			 while(rs.next()){
 				 Produtos produtos = new Produtos();
-				 ItensVenda itesnvenda = new ItensVenda(); 
-				 
+				 ItensVenda itesnvenda = new ItensVenda();
+
 				 itesnvenda.setQtd(rs.getInt("QUANTIDADE"));
 				 produtos.setDescricao(rs.getString("DESCRICAO"));
-				 
+
 				 itesnvenda.setProduto(produtos);
-				 
-				 
+
+
 				 lista.add(itesnvenda);
-				
-				 
-				 
-				 
+
+
+
+
 			 }
-			 
-			
+
+
 		} catch (SQLException e) {
-			
+
 		}
 		return lista;
-		
+
 	}
 	public double lucroVenda(int id) {
 	    double totalVenda = 0;
@@ -354,9 +349,9 @@ public class VendasDAO {
 	    return totalVenda;
 	}
 	public double lucroPorPeriod(Date dataInicio, Date dataFim){
-	
+
 		double totalLucro = 0;
-		
+
 		try {
 			String sql =  "   SELECT SUM(PRODUTO.PRECO_DE_VENDA - PRODUTO.PRECO_DE_COMPRA) AS LUCRO_DA_VENDA "
 					    + "   FROM TB_PRODUTOS AS PRODUTO "
@@ -364,36 +359,36 @@ public class VendasDAO {
 					    + "   INNER JOIN TB_VENDAS      AS VENDA ON VENDA.ID = ITENS.VENDA_ID "
 					    + "   WHERE "
 					    + "   DATE(VENDA.DATA_VENDA) BETWEEN ? AND ? ";
-			
+
 			PreparedStatement stmt = con.prepareStatement(sql);
 			stmt.setDate(1, new java.sql.Date(dataInicio.getTime()));
 			stmt.setDate(2, new java.sql.Date(dataFim.getTime()));
-			
+
 			ResultSet rs = stmt.executeQuery();
 			 if(rs.next()){
-				 
+
 				 totalLucro = rs.getDouble("LUCRO_DA_VENDA");
-				 
-				
-				
-				 
-				 
-				 
+
+
+
+
+
+
 			 }
-			 
-			
+
+
 		} catch (SQLException e) {
-			
+
 		}
 		return totalLucro;
-		
+
 	}
-	
 
 
-	  
+
+
 }
 
-	
+
 
 

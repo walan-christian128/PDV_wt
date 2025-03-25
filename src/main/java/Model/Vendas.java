@@ -11,7 +11,7 @@ public class Vendas {
     private double desconto;
     private String formaPagamento;
     private Usuario usuario;
-    
+
     public Usuario getUsuario() {
 		return usuario;
 	}
@@ -32,7 +32,7 @@ public class Vendas {
         this.formaPagamento = formaPagamento;
     }
 
-    
+
 
     public double getDesconto() {
         return desconto;
@@ -84,5 +84,5 @@ public class Vendas {
         this.obs = obs;
     }
 
-    
+
 }

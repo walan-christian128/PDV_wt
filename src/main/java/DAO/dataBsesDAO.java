@@ -22,7 +22,7 @@ public class dataBsesDAO {
 	        } catch (SQLException e) {
 	            e.printStackTrace(); // Trate a exceção conforme necessário
 	        }
-       
+
     }
 
     public List<String> listDatabases() {
@@ -35,7 +35,7 @@ public class dataBsesDAO {
             while (rs.next()) {
                 databases.add(rs.getString("SCHEMA_NAME"));
             }
-         
+
 
         } catch (SQLException e) {
             e.printStackTrace(); // Melhor tratamento de exceção

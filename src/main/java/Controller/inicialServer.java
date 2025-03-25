@@ -1,7 +1,30 @@
 package Controller;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+
+import javax.imageio.ImageIO;
+import javax.naming.NamingException;
+
+import DAO.UsuarioDAO;
+import DAO.VendasDAO;
+import DAO.createData;
+import DAO.itensVendaDAO;
+import Model.Empresa;
+import Model.ItensVenda;
+import Model.Usuario;
+import Model.Vendas;
+import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -14,35 +37,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.naming.NamingException;
-
-import jakarta.mail.Session;
-import jakarta.mail.Message;
-
-import Conexao.ConectionFactory;
-import DAO.createData;
-import DAO.dataBsesDAO;
-import DAO.UsuarioDAO;
-import DAO.VendasDAO;
-import DAO.itensVendaDAO;
-import Model.Empresa;
-import Model.ItensVenda;
-import Model.Usuario;
-import Model.Vendas;
 
 @WebServlet(urlPatterns = { "/selecionarVenda", "/totalVendas", "/CadastroUserEmpresa", "/RecuperaSenhaServlet",
 		"/AtualizaçãoSenha" })
@@ -59,6 +53,7 @@ public class inicialServer extends HttpServlet {
 		super();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -131,7 +126,7 @@ public class inicialServer extends HttpServlet {
 
 			uso.setSenha(senha);
 			uso.setEmail(email);
-			
+
 			if (senha .equals(senha2) ) {
 				UsuarioDAO dao = new UsuarioDAO(empresa);
 				dao.recuperaSenha(senha, email, empresa);
@@ -140,7 +135,7 @@ public class inicialServer extends HttpServlet {
 				rd.forward(request, response);
 
 			} else if (senha != senha2) {
-				
+
 				request.setAttribute("erro","Campo confirmação de senha diferente do campo nova senha verifique o valor e digite novamente");
 				RequestDispatcher rd = request.getRequestDispatcher("RedefinirSenha.jsp");
 				rd.forward(request, response);
@@ -189,7 +184,7 @@ public class inicialServer extends HttpServlet {
 					// Criando a mensagem de e-mail
 					MimeMessage message = new MimeMessage(session);
 					message.setFrom(new InternetAddress("walancristiano@gmail.com")); // E-mail do remetente
-					message.addRecipient(MimeMessage.RecipientType.TO, new InternetAddress(to)); // E-mail do
+					message.addRecipient(RecipientType.TO, new InternetAddress(to)); // E-mail do
 																									// destinatário
 					message.setSubject("Recuperação de Senha");
 					message.setText("Click no link para redefinição de senha: " + resetLink);
@@ -315,7 +310,8 @@ public class inicialServer extends HttpServlet {
 	            return null;
 	        }
 	    }
-	
+
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);

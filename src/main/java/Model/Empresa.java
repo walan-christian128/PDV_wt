@@ -53,5 +53,5 @@ public class Empresa {
 	public void setLogo(byte[] logo) {
 		this.logo = logo;
 	}
-	
+
 }

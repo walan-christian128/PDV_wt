@@ -1,16 +1,12 @@
 package DAO;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 import Conexao.ConectionFactory;
 import Model.Empresa;
@@ -23,7 +19,7 @@ public class createData {
 
 
     public createData(String databaseName) {
-    
+
 
         try {
             // Conectar ao MySQL sem especificar um banco de dados para criar o banco
@@ -49,7 +45,7 @@ public class createData {
             // Criar tabelas
             createTables();
 
-          
+
 
         } catch (Exception e) {
             System.err.println("Erro ao tentar estabelecer conexão com o banco de dados.");
@@ -184,8 +180,8 @@ public class createData {
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
             statement.executeUpdate(createTable_6);
 
-           
-            
+
+
             String createTable_7 = "CREATE TABLE tb_empresa (" +
                     "id INT auto_increment PRIMARY KEY," +
                     "nome VARCHAR(150)," +
@@ -194,7 +190,7 @@ public class createData {
                     "logo LONGBLOB" +
                     ");";
             statement.executeUpdate(createTable_7);
-            
+
             String createTable_8 = "CREATE TABLE tb_usuario (" +
                     "ID INT auto_increment PRIMARY KEY, " +
                     "NOME VARCHAR(150), " +
@@ -235,7 +231,7 @@ public class createData {
             stmtEmpresa.setString(1, emp.getNome());
             stmtEmpresa.setString(2, emp.getCnpj());
             stmtEmpresa.setString(3, emp.getEndereco());
-            
+
             if (emp.getLogo() != null) {
                 ByteArrayInputStream bais = new ByteArrayInputStream(emp.getLogo());
                 stmtEmpresa.setBinaryStream(4, bais, emp.getLogo().length);
@@ -243,7 +239,7 @@ public class createData {
                 stmtEmpresa.setNull(4, Types.BLOB);
             }
 
-            
+
 
             stmtEmpresa.executeUpdate();
 
@@ -259,7 +255,7 @@ public class createData {
             stmtUsuario.setString(1, uso.getNome());
             stmtUsuario.setString(2, uso.getTelefone());
             stmtUsuario.setString(3, uso.getEmail());
-            stmtUsuario.setString(4, pass.hashPassword(uso.getSenha()));
+            stmtUsuario.setString(4, PasswordUtil.hashPassword(uso.getSenha()));
             stmtUsuario.setInt(5, empresaId); // Relacionando o usuário à empresa criada
 
             stmtUsuario.executeUpdate();
@@ -279,5 +275,5 @@ public class createData {
     }
 
 
-    
+
 }

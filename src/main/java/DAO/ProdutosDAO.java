@@ -1,15 +1,15 @@
 package DAO;
 
-import Conexao.ConectionDataBases;
-import Conexao.ConectionFactory;
-import Model.Fornecedores;
-import Model.Produtos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import Conexao.ConectionDataBases;
+import Model.Fornecedores;
+import Model.Produtos;
 
 /**
  *
@@ -95,7 +95,7 @@ public class ProdutosDAO {
         try {
             String sql = "UPDATE tb_produtos set descricao=?,qtd_estoque=?,for_id=?,preco_de_compra=?,preco_de_venda=? where id=?";
 
-            //Organização SQL e Conexão // 
+            //Organização SQL e Conexão //
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setString(1, obj.getDescricao());
@@ -187,7 +187,7 @@ public class ProdutosDAO {
 				obj.setDescricao(rs.getString("descricao"));
 				obj.setPreco_de_compra(rs.getDouble("preco_de_compra"));
 				obj.setPreco_de_venda(rs.getDouble("preco_de_venda"));
-				
+
 
 				obj.setFornecedor(f);
 
@@ -212,7 +212,7 @@ public class ProdutosDAO {
 			PreparedStatement stmt = con.prepareStatement(sql);
 			stmt.setInt(1, obj.getId());
 			ResultSet rs = stmt.executeQuery();
-			
+
 			Fornecedores f = new Fornecedores();
 
 			if (rs.next()) {
@@ -222,7 +222,7 @@ public class ProdutosDAO {
 				obj.setQtd_estoque(rs.getInt("p.qtd_estoque"));
 				obj.setPreco_de_compra(rs.getDouble("p.preco_de_compra"));
 				obj.setPreco_de_venda(rs.getDouble("p.preco_de_venda"));
-                
+
 				f.setNome(rs.getString(("f.nome")));
 				f.setId(rs.getInt("f.id"));
 
@@ -230,7 +230,7 @@ public class ProdutosDAO {
 
 			}
 
-	
+
 
 		} catch (SQLException e) {
 
@@ -297,7 +297,7 @@ public class ProdutosDAO {
 			stmt.close();
 
 		} catch (Exception e) {
- 
+
 		}
 
 	}
@@ -360,11 +360,11 @@ public class ProdutosDAO {
 			if (rs.next()) {
 				Fornecedores f = new Fornecedores();
 				 rs.getString("f.nome");
-				 
+
 				 lista.add(f);
 			}
 			return lista;
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

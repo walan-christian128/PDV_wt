@@ -1,8 +1,5 @@
 package DAO;
 
-import Model.Clientes;
-import Conexao.ConectionDataBases;
-import Conexao.ConectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +9,9 @@ import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
+
+import Conexao.ConectionDataBases;
+import Model.Clientes;
 
 /**
  *
@@ -38,7 +38,7 @@ public class ClientesDAO {
             String sql = "select*from tb_clientes where nome like ?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, nome);
-            
+
 
             ResultSet rs = stmt.executeQuery();
             Clientes obj = new Clientes();
@@ -67,15 +67,15 @@ public class ClientesDAO {
             return null;
         }
     }
-    
-    
-    
+
+
+
      public Clientes consultarClientesPorcpf(String cpf) {
         try {
             String sql = "select*from tb_clientes where cpf like ?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, cpf);
-            
+
 
             ResultSet rs = stmt.executeQuery();
             Clientes obj = new Clientes();
@@ -100,7 +100,7 @@ public class ClientesDAO {
             }
             return obj;
         } catch (Exception erro) {
-          
+
             return null;
         }
     }
@@ -111,7 +111,7 @@ public class ClientesDAO {
         try {
             String sql = "INSERT INTO tb_clientes(nome,rg,cpf,email,telefone,celular,cep,endereco,numero,complemento,bairro,cidade,estado)"
                     + "                    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            //Organização SQL e Conexão // 
+            //Organização SQL e Conexão //
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getRg());
@@ -131,10 +131,10 @@ public class ClientesDAO {
             stmt.execute();
             stmt.close();
 
-          
+
 
         } catch (SQLException erro) {
-            
+
         }
 
     }
@@ -145,7 +145,7 @@ public class ClientesDAO {
             String sql = "UPDATE tb_clientes set nome=?,rg=?,cpf=?,email=?,telefone=?,celular=?,cep=?"
                     + ",endereco=?,numero=?,complemento=?,bairro=?,cidade=?,estado=? WHERE ID=?";
 
-            //Organização SQL e Conexão // 
+            //Organização SQL e Conexão //
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getRg());
@@ -166,7 +166,7 @@ public class ClientesDAO {
             stmt.executeUpdate();
             stmt.close();
 
-           
+
 
         } catch (SQLException erro) {
         	 erro.printStackTrace();
@@ -178,7 +178,7 @@ public class ClientesDAO {
     public void excluirCliente(Clientes obj) {
         try {
             String sql = "DELETE FROM tb_clientes where id = ?";
-            //Organização SQL e Conexão // 
+            //Organização SQL e Conexão //
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 
@@ -186,10 +186,10 @@ public class ClientesDAO {
             stmt.execute();
             stmt.close();
 
-            
+
 
         } catch (SQLException erro) {
-           
+
         }
 
     }
@@ -267,11 +267,11 @@ public class ClientesDAO {
             JOptionPane.showMessageDialog(null, "Erro" + erro);
             return null;
         }
-        
+
     }
     public void modalClientes(Clientes obj) {
         try {
-           
+
 
             //criando sql//
             String sql = "SELECT * FROM tb_clientes where id = ?";
@@ -280,7 +280,7 @@ public class ClientesDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                
+
                 obj.setId(rs.getInt("id"));
                 obj.setNome(rs.getString("nome"));
                 obj.setRg(rs.getString("rg"));
@@ -296,20 +296,20 @@ public class ClientesDAO {
                 obj.setCidade(rs.getString("cidade"));
                 obj.setUf(rs.getString("estado"));
 
-              
+
 
             }
-            
+
         } catch (SQLException erro) {
             JOptionPane.showMessageDialog(null, "Erro" + erro);
-            
+
         }
     }
-    
-	
-	  
-	
-	
-    
-         
+
+
+
+
+
+
+
 }

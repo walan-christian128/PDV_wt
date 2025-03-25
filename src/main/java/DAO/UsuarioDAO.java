@@ -62,7 +62,7 @@ public class UsuarioDAO {
 
 				// Criar instância de PasswordUtil para comparar o hash
 				PasswordUtil passUtil = new PasswordUtil();
-				String senhaHashFornecida = passUtil.hashPassword(senha);
+				String senhaHashFornecida = PasswordUtil.hashPassword(senha);
 
 				// Comparar o hash armazenado com o hash da senha fornecida
 				if (senhaHash.equals(senhaHashFornecida)) {
@@ -80,12 +80,15 @@ public class UsuarioDAO {
 		} finally {
 			// Fechar os recursos
 			try {
-				if (rs != null)
+				if (rs != null) {
 					rs.close();
-				if (stmt != null)
+				}
+				if (stmt != null) {
 					stmt.close();
-				if (con != null)
+				}
+				if (con != null) {
 					con.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -127,12 +130,15 @@ public class UsuarioDAO {
 		} finally {
 			// Fechar os recursos
 			try {
-				if (rs != null)
+				if (rs != null) {
 					rs.close();
-				if (stmt != null)
+				}
+				if (stmt != null) {
 					stmt.close();
-				if (con != null)
+				}
+				if (con != null) {
 					con.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -146,7 +152,7 @@ public class UsuarioDAO {
 	    Connection con = null;
 	    PreparedStatement stmt = null;
 	    Usuario usuarioSenha = new Usuario();
-	    
+
 	    try {
 	        // Carrega o driver JDBC do MySQL
 	        Class.forName("com.mysql.cj.jdbc.Driver");
@@ -161,7 +167,7 @@ public class UsuarioDAO {
 
 	        // Gera o hash da nova senha
 	        PasswordUtil passUtil = new PasswordUtil();
-	        String senhaHashed = passUtil.hashPassword(senha);
+	        String senhaHashed = PasswordUtil.hashPassword(senha);
 
 	        // Atualiza a senha no banco de dados
 	        String sql = "UPDATE tb_usuario SET senha = ? WHERE email = ?";
@@ -183,10 +189,14 @@ public class UsuarioDAO {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    } finally {
-	        if (stmt != null) stmt.close();
-	        if (con != null) con.close();
+	        if (stmt != null) {
+				stmt.close();
+			}
+	        if (con != null) {
+				con.close();
+			}
 	    }
-	    
+
 	    return usuarioSenha;
 	}
 	public int cidugoUsuario(Usuario usuario, String empresa) throws SQLException, ClassNotFoundException {
@@ -194,34 +204,34 @@ public class UsuarioDAO {
 	    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresa, "walan", "359483wa@");
 
 	    String sql = "SELECT id FROM tb_usuario WHERE email = ?";
-	    
+
 	    try {
 	        PreparedStatement stmt = con.prepareStatement(sql);
 	        stmt.setString(1, usuario.getEmail());
 	        ResultSet rs = stmt.executeQuery();
-	        
+
 	        if (rs.next()) {
 	            return rs.getInt("id");
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-	    
+
 	    return 0; // Retorna 0 se o usuário não for encontrado
 	}
 
-	
+
 	public Usuario retornUser(Usuario usuario, String empresa,int idUser) throws SQLException, ClassNotFoundException {
 	    Class.forName("com.mysql.cj.jdbc.Driver");
 	    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + empresa, "walan", "359483wa@");
 
 	    String sql = "SELECT nome FROM tb_usuario WHERE email = ?";
-	    
+
 	    try {
 	        PreparedStatement stmt = con.prepareStatement(sql);
 	        stmt.setString(1, usuario.getEmail());
 	        ResultSet rs = stmt.executeQuery();
-	        
+
 	        if (rs.next()) {
 	           usuario.setNome(rs.getString("nome"));
 	        }
@@ -229,8 +239,8 @@ public class UsuarioDAO {
 	        e.printStackTrace();
 	    }
 		return usuario;
-	    
-	   
+
+
 	}
 	 public Empresa retornCompany(Empresa emp, String empresaNome, int codigo) throws SQLException, ClassNotFoundException {
 	        Class.forName("com.mysql.cj.jdbc.Driver");
